@@ -33,10 +33,10 @@ const AppNavigator = createDrawerNavigator({
   Inventory: {screen: Inventory}
 });
 const AppSwitchNavigator = createSwitchNavigator({
+  Activity: { screen: Activity },
   Home: {screen: AppNavigator},
   Login: { screen: Login },
   Inventory: {screen: AppNavigator},
-  Activity: { screen: Activity },
   AddCustomer: {screen: AddCustomer},
   Welcome: {screen: WelcomeScreen},
   Manual: { screen: Manual },

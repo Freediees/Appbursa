@@ -24,6 +24,20 @@ class SimpleModal extends Component{
 
   }
 
+  _storeData = async () => {
+    try {
+
+      await AsyncStorage.setItem('Data', JSON.stringify(datax));
+      this.props.changeModalVisibility(false, 7);
+      alert('Data Berhasil Disimpan');
+
+
+    } catch (error) {
+      // Error saving data
+    }
+  };
+
+
   _retreiveData = async () => {
     try {
       const value = await AsyncStorage.getItem('Data');
@@ -32,7 +46,7 @@ class SimpleModal extends Component{
         let data = JSON.parse(value);
         console.log(data);
 
-        this.setState({list: data});
+        this.setState({list: data}); 
       }
     } catch (error) {
       // Error retrieving data
@@ -45,8 +59,19 @@ class SimpleModal extends Component{
     });
   }
 
+  onPressHapus(res){
+    let array = [];
+
+    array = this.props.tempBill;
+    //let index = array.indexOf(res);
+
+    array.splice(res, 1);
+
+    console.log(array);
+  }
+
   renderItem(res){
-    console.log(res)
+    //console.log(res)
     return(
       <Row style={{ margin: 3, height: 40, borderBottomWidth: 1, borderColor: color4}} key={res.item.id}>
         <Col size={6} style={{  justifyContent: 'center', padding: 5}}>
@@ -60,19 +85,16 @@ class SimpleModal extends Component{
           </View>
         </Col>
         <Col size={1} style={{ padding: 3 }}>
-          <View style={{ backgroundColor: color3, flex: 1,height: 30, borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
+          <TouchableOpacity style={{ backgroundColor: color3, flex: 1,height: 30, borderRadius: 5, justifyContent: 'center', alignItems: 'center' }} onPress={ () => this.onPressHapus(res.index) }>
             <Text style={[styles.textStyle, {fontSize: 10, color: 'white'}]}>
               Hapus
             </Text>
-          </View>
+          </TouchableOpacity>
         </Col>
       </Row>
     );
   }
 
-  testLoop = () => {
-    return data.map(res=> this.renderItem(res));
-  }
 
   render(){
 

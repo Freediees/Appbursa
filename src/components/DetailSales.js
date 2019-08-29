@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { ListItem, Icon, Left, Right, Body } from 'native-base';
 
+import { color1, color2, color3, color4, color5 } from './Color';
+
 class List extends Component{
   render(){
     return(
@@ -29,7 +31,17 @@ class DetailSales extends Component{
       return(
         <View style={ styles.viewStyles }>
 
-
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 20, borderBottomWidth: 1}}>
+            <View style = {styles.buttonStyle}>
+              <Text style={[ styles.text, { color: 'white'}]}>Refund</Text>
+            </View>
+            <View style = {styles.buttonStyle}>
+              <Text style={[ styles.text, { color: 'white'}]}>Kirim Invoice</Text>
+            </View>
+            <View style = {styles.buttonStyle}>
+              <Text style={[ styles.text, { color: 'white'}]}>Cetak Invoice</Text>
+            </View>
+          </View>
           <Text style={ [styles.teks], {padding: 10} }>Details</Text>
 
           <View style={ styles.content }>
@@ -53,7 +65,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     paddingTop: 0,
-    borderTopWidth: 1,
   },
   header: {
     width: '100%',
@@ -78,5 +89,14 @@ const styles = StyleSheet.create({
   content: {
     borderTopWidth: 1,
     paddingTop: 10,
+    borderTopWidth: 1
+  },
+  buttonStyle: {
+    backgroundColor:  color3,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+    width: 100,
+    borderRadius: 5
   }
 });

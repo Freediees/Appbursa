@@ -43,7 +43,6 @@ class SimpleModal extends Component{
   _storeData = async () => {
     try {
 
-
       console.log(this.props.tempBill);
 
       let datax = []
@@ -54,13 +53,6 @@ class SimpleModal extends Component{
 
       datax = this.props.tempBill;
       datax.push(dataSimpan);
-
-      //await this.props.tempBill;
-
-      //datax.push(this.props.tempBill);
-      //datax.push(dataSimpan);
-
-      //console.log(datax);
 
       await AsyncStorage.setItem('Data', JSON.stringify(datax));
       this.props.changeModalVisibility(false, 7);
