@@ -98,7 +98,7 @@ class Home extends Component{
   }
 
   cetakBill = () => {
-    alert("Tidak ada koneksi ke printer");
+    alert("Tidak ada koneksi ke printers");
   }
 
   renderItem(item){
