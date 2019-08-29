@@ -1,115 +1,152 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, Button, TouchableOpacity, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { Card, Left, Right, Body, CardItem, Container, Icon } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
-import { Container, Icon } from 'native-base';
+import { connect } from 'react-redux';
 
+import { getDataSales, testThunk, getDetails } from '../actions';
+
+import axios from 'axios';
+
+import DetailSales from './DetailSales';
+import { color1, color2, color3, color4, color5 } from './Color';
 
 const data = [
-  {name: "Data 1", price: 12000, id: 1, varian: "Varian 1", stock: 10, alert: 5},
-  {name: "Data 2", price: 100000, id: 2, varian: "Varian 2", stock: 100, alert: 2},
-  {name: "Data 3", price: 50000, id: 3, varian: "Varian 3", stock: 5, alert: 1},
-  {name: "Data 1", price: 12000, id: 1, varian: "Varian 1", stock: 10, alert: 5},
-  {name: "Data 2", price: 100000, id: 2, varian: "Varian 2", stock: 100, alert: 2},
-  {name: "Data 3", price: 50000, id: 3, varian: "Varian 3", stock: 5, alert: 1},
-  {name: "Data 1", price: 12000, id: 1, varian: "Varian 1", stock: 10, alert: 5},
-  {name: "Data 2", price: 100000, id: 2, varian: "Varian 2", stock: 100, alert: 2},
-  {name: "Data 3", price: 50000, id: 3, varian: "Varian 3", stock: 5, alert: 1},
-  {name: "Data 1", price: 12000, id: 1, varian: "Varian 1", stock: 10, alert: 5},
-  {name: "Data 2", price: 100000, id: 2, varian: "Varian 2", stock: 100, alert: 2},
-  {name: "Data 3", price: 50000, id: 3, varian: "Varian 3", stock: 5, alert: 1},
-];
+  {id: 1, nama_barang: 'Sajadah', alert: 1, stock: 100},
+  {id: 2, nama_barang: 'Mukena', alert: 2, stock: 20},
+]
 
+class Activity extends Component{
 
-class Inventory extends Component {
+  constructor(props){
+    super(props);
 
-  renderItem(item){
+    this.state=({
+      dataList: [],
+    })
+  }
+
+  componentDidMount(){
+
+  }
+
+  renderItem(res){
+    console.log(res)
     return(
-      <TouchableOpacity style={{ padding: 10, marginBottom: 10, justifyContent: "space-between", flexDirection: "row", borderBottomWidth: 1, borderColor: "#E9EDEC" }}>
-        <Text style={styles.text}>{item.item.name}</Text>
-        <Text style={styles.text}>{item.item.varian}</Text>
-        <Text style={styles.text}>{item.item.stock}</Text>
-        <Text style={styles.text}>{item.item.alert}</Text>
-      </TouchableOpacity>
+      <Row style={{ height: 30, margin: 3 }} key={res.id}>
+        <Col style={ styles.colStyle }>
+          <Text style={ styles.textStyle }>{res.nama_barang}</Text>
+        </Col>
+
+        <Col style={ styles.colStyle }>
+          <Text style={ styles.textStyle }>{res.stock}</Text>
+        </Col>
+
+        <Col style={ styles.colStyle }>
+          <Text style={ styles.textStyle }>{res.alert}</Text>
+        </Col>
+      </Row>
     );
   }
 
+  testLoop = () => {
+    return data.map(res=> this.renderItem(res));
+  }
+
+
+
 
   render(){
-    return(
-      <Container style={{ backgroundColor: '#E9EDEC', paddingTop: 20 }}>
-        <Grid style={{ margin: 10}}>
-          <Row style={{ height: 50 }}>
-            <Col size={1} style={{ backgroundColor: '#ffffff', margin: 5}}>
-              <View style={{ flex: 1, justifyContent: 'center', paddingLeft: 8 }}>
-                <Text style={ styles.text }>Item Library</Text>
-              </View>
-            </Col>
-            <Col size={2} style={{ backgroundColor: '#ffffff', margin: 5}}>
-              <View style={{ flex: 1, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', paddingLeft: 8, paddingRight: 8}}>
-                <Text style={styles.text}>Search</Text>
-                <Icon style={styles.text} name="search" />
-              </View>
-            </Col>
-          </Row>
-          <Row>
-            <Col style={{ backgroundColor: '#ffffff', margin: 5}}>
-              <Row style={{ height: 60 }}>
-                <View style={{ flex: 1, justifyContent: 'center', alignItems:'center', borderColor: 'grey', borderBottomWidth: 1, marginRight: 10, marginLeft: 10}}>
-                  <Text style={{ fontSize: 25, fontFamily:'Roboto', color: 'grey' }}>Inventory</Text>
-                </View>
-              </Row>
-              <Row style={{ height: 30, borderColor: 'grey', borderBottomWidth: 1, marginRight: 10, marginLeft: 10 }}>
-                <Col style={{ justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={styles.text}>ITEM NAME</Text>
-                </Col>
-                <Col style={{ justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={styles.text}>VARIANT</Text>
-                </Col>
-                <Col style={{ justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={styles.text}>IN STOCK</Text>
-                </Col>
-                <Col style={{ justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={styles.text}>STOCK ALERT</Text>
-                </Col>
-              </Row>
-              <Row style={{ padding: 10, backgroundColor: '#ffffff'}}>
-                <FlatList
-                  data={data}
-                  renderItem={(item)=>this.renderItem(item)}
-                />
-              </Row>
-            </Col>
-          </Row>
-        </Grid>
+    //console.log(this.props.dataDetail);
 
+    let kirimData = this.props.dataDetail
+
+    //console.log(this.props.dataSales.transaksi.data);
+
+    let konten =<View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}><Text>Tunggu Sebentars</Text>
+    <ActivityIndicator size="large" /></View>
+
+    let konten2 = konten;
+
+    if(this.props.dataSales.isFetching == false){
+      konten = <FlatList
+        data={this.props.dataSales.transaksi.data}
+        renderItem={(item)=>this.renderItem(item)}
+      />
+
+      konten2 = <DetailSales data={kirimData || this.props.dataSales.transaksi.data}/>
+    }
+
+
+    const a = <Text>Hello</Text>
+
+    return(
+      <Container>
+        <View style={{ height: 70, backgroundColor: color3, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 30, fontFamily: 'Roboto', color: 'white', fontWeight:'bold' }}>INVENTORY</Text>
+        </View>
+        <Grid>
+            <Row style={{ borderBottomWidth: 1, height: 40}}>
+              <Col style={ styles.colStyle }>
+                <Text style={ styles.textStyle }>Nama Barang</Text>
+              </Col>
+
+              <Col style={ styles.colStyle }>
+                <Text style={ styles.textStyle }>Jumlah Stock</Text>
+              </Col>
+
+              <Col style={ styles.colStyle }>
+                <Text style={ styles.textStyle }>Alert</Text>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col>
+                { this.testLoop() }
+              </Col>
+            </Row>
+
+        </Grid>
 
         <View style={{ height: 80, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <Grid>
             <Row>
-              <Col style={{ backgroundColor: '#92d66f', width: 80}}>
+              <Col style={{ backgroundColor: color2, width: 80}}>
                 <TouchableOpacity style={{ flex: 1, justifyContent: 'center', paddingLeft: 20 }} onPress={()=> this.props.navigation.openDrawer()}>
                   <Icon type="Entypo" name="menu" style={{ color: 'white', fontSize: 40}} />
                 </TouchableOpacity>
               </Col>
-              <Col style={{ backgroundColor: '#92d66f'}}>
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                  <Text style={{ fontFamily: "Roboto", fontSize: 30, color: 'white'}}>BURSA SAJADAH</Text>
-                </View>
+              <Col style={{ backgroundColor: color3, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontSize: 30, fontFamily: 'Roboto', color: 'white', fontWeight:'bold' }}>BURSASAJADAH</Text>
               </Col>
+
             </Row>
           </Grid>
         </View>
+
       </Container>
     );
   }
 }
 
-export default Inventory;
-
 const styles = StyleSheet.create({
-  text: {
-    fontSize: 15,
+  colStyle: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  textStyle: {
     fontFamily: 'Roboto',
-    color: 'grey',
+    color: 'grey'
   }
-});
+})
+
+
+export default connect(mapStateToProps,{ testThunk, getDetails })(Activity);
+
+function mapStateToProps(state){
+  return{
+    dataSales: state.setGetDataSales,
+    dataDetail: state.setDataDetail,
+  };
+}

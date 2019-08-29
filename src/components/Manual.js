@@ -13,6 +13,8 @@ const data=[
   {key:"Jason3"},
 ];
 
+import { color1, color2, color3, color4 } from './Color';
+
 class Home extends Component{
 
   constructor(props){
@@ -240,14 +242,14 @@ class Home extends Component{
           </Col>
           <Col size={1} style={{backgroundColor:'white', borderRadius: 10, margin: 10, marginRight: 20}}>
             <Row style={{height: 80}}>
-                <Col size={1} style={{ backgroundColor: '#d3ed95', borderTopLeftRadius: 10 }}>
+                <Col size={1} style={{ backgroundColor: color3, borderTopLeftRadius: 10 }}>
                   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                    <Icon name="home" style={{ color: 'grey' }}/>
+                    <Icon name="home" style={{ color: '#ffffff' }}/>
                   </View>
                 </Col>
-                <Col size={3} style={{ backgroundColor: '#e6ffab', borderTopRightRadius: 10 }}>
+                <Col size={3} style={{ backgroundColor: color2, borderTopRightRadius: 10 }}>
                   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style={{ fontSize: 25, color: 'grey' }}>+Customer</Text>
+                    <Text style={{ fontSize: 25, color: '#ffffff' }}>+Customer</Text>
                   </View>
                 </Col>
             </Row>
@@ -259,18 +261,18 @@ class Home extends Component{
             </Row>
 
               <Row style={{ height: 80,}}>
-                <Col style={{ backgroundColor: '#e6ffab', margin: 1 }}>
+                <Col style={{ backgroundColor: color1, margin: 1 }}>
                   <View style={{ flex: 1, justifyContent:'center', alignItems:'center'}}>
-                    <Text style={styles.text}>Save Bill</Text>
+                    <Text style={[styles.text, {color: '#ffffff'}]}>Save Bill</Text>
                   </View>
                 </Col>
-                <Col style={{ backgroundColor: '#e6ffab', margin: 1 }}>
+                <Col style={{ backgroundColor: color1, margin: 1 }}>
                 <View style={{ flex: 1, justifyContent:'center', alignItems:'center'}}>
-                  <Text style={styles.text}>Print Bill</Text>
+                  <Text style={[styles.text, {color: '#ffffff'}]}>Print Bill</Text>
                 </View>
                 </Col>
               </Row>
-              <Row style = {{ backgroundColor: '#d3ed95', height: 80, borderBottomLeftRadius: 10, borderBottomRightRadius: 10}}>
+              <Row style = {{ backgroundColor: color3, height: 80, borderBottomLeftRadius: 10, borderBottomRightRadius: 10}}>
                 <Col>
                   <TouchableOpacity style={{ flex: 1, justifyContent:'center', alignItems:'center'}} onPress={()=> this.changeModalVisibility(true)}>
                     <Text style={{ fontSize: 30, color: '#ffffff' }}>Charge Rp.{this.props.setTotal}</Text>
@@ -285,24 +287,24 @@ class Home extends Component{
         <View style={{ height: 80, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <Grid>
             <Row>
-              <Col style={{ backgroundColor: '#92d66f', width: 80}}>
+              <Col style={{ backgroundColor: color2, width: 80}}>
                 <TouchableOpacity style={{ flex: 1, justifyContent: 'center', paddingLeft: 20 }} onPress={()=> this.props.navigation.openDrawer()}>
                   <Icon type="Entypo" name="menu" style={{ color: 'white', fontSize: 40}} />
                 </TouchableOpacity>
               </Col>
-              <Col style={{ backgroundColor: '#92d66f'}}>
+              <Col style={{ backgroundColor: color2}}>
                 <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} onPress={()=> { this.props.navigation.navigate('Favorites')} } >
                   <Icon type="Ionicons" name="md-star" style={{ color: 'white', fontSize: 40}} />
-                  <Text style={{ fontFamily: "Roboto", fontSize: 15, color: 'white'}}>Favorites</Text>
+                  <Text style={{ fontFamily: "Roboto", fontSize: 15, color: 'white'}}>Transaction</Text>
                 </TouchableOpacity>
               </Col>
-              <Col style={{ backgroundColor: '#92d66f'}}>
+              <Col style={{ backgroundColor: color2}}>
                 <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}} onPress={()=> { this.props.navigation.navigate('Home')} } >
                   <Icon type="Entypo" name="list" style={{ color: 'white', fontSize: 40}}/>
                   <Text style={{ fontFamily: "Roboto", fontSize: 15, color: 'white'}}>Library</Text>
                 </TouchableOpacity>
               </Col>
-              <Col style={{ backgroundColor: '#7ab55c'}}>
+              <Col style={{ backgroundColor: color3 }}>
                 <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
                   <Icon type="Ionicons" name="md-calculator" style={{ color: 'white', fontSize: 40}}/>
                   <Text style={{ fontFamily: "Roboto", fontSize: 15, color: 'white'}}>Manual</Text>

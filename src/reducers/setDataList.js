@@ -2,7 +2,7 @@ const setDataList = (state=[], action) => {
   switch(action.type){
     case "ADD_LIBRARY":
 
-      console.log('hemeh');
+      //console.log(action.data.data);
       const data = action.data.data.data;
 
       return[...state, data];

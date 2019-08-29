@@ -5,15 +5,14 @@ import { Provider } from 'react-redux';
 import { createSwitchNavigator, createAppContainer, createDrawerNavigator } from 'react-navigation';
 
 
-
 import Home from "./Home";
+import Login from './Login';
 import WelcomeScreen from './Welcome';
 import Activity from "./Activity";
 import Manual from "./Manual";
 import Inventory from "./Inventory";
 import Favorites from "./Favorites";
-
-
+import AddCustomer from "./AddCustomer";
 
 export default class App extends Component {
   render(){
@@ -27,19 +26,22 @@ export default class App extends Component {
 
 const AppNavigator = createDrawerNavigator({
   Home: {screen: Home},
-  Favorites: {screen: Favorites},
+  Favorites: {screen: Activity},
   Activity: {screen: Activity},
   Setting: {screen: WelcomeScreen},
   Manual: {screen: Manual},
   Inventory: {screen: Inventory}
 });
 const AppSwitchNavigator = createSwitchNavigator({
-  Activity: { screen: Activity },
   Home: {screen: AppNavigator},
+  Login: { screen: Login },
+  Inventory: {screen: AppNavigator},
+  Activity: { screen: Activity },
+  AddCustomer: {screen: AddCustomer},
   Welcome: {screen: WelcomeScreen},
   Manual: { screen: Manual },
-  Inventory: {screen: Inventory},
-  Favorites: {screen: Favorites},
+  Favorites: {screen: Activity},
+
 });
 
 const AppContainer =  createAppContainer(AppSwitchNavigator);
