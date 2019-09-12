@@ -126,7 +126,7 @@ class Activity extends Component{
                 </TouchableOpacity>
               </Col>
               <Col style={{ backgroundColor: color2}}>
-                <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} onPress={()=> { this.props.navigation.navigate('Manual')} }>
+                <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} onPress={()=> { this.props.navigation.navigate('Inventory')} }>
                   <Icon type="Ionicons" name="md-calculator" style={{ color: 'white', fontSize: 40}}/>
                   <Text style={{ fontFamily: "Roboto", fontSize: 15, color: 'white'}}>Manual</Text>
                 </TouchableOpacity>

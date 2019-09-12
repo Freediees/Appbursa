@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { ListItem, Icon, Left, Right, Body } from 'native-base';
 
 import { color1, color2, color3, color4, color5 } from './Color';
 
 class List extends Component{
+
+
+
+  componentDidMount(){
+    //console.log(this.props);
+  }
   render(){
     return(
       <ListItem icon>
@@ -24,17 +30,82 @@ class List extends Component{
 
 class DetailSales extends Component{
 
+  constructor(props){
+    super(props)
+    this.state = {
+      refund: false
+    }
+  }
+
+  componentDidMount(){
+
+    this.setState({
+      refund: false
+    })
+  }
+
+
+
+  renderRefund =()=> {
+
+    //console.log(this.state.refund);
+
+    let cik = <Text></Text>
+
+    if(this.state.refund){
+      cik = <View style={{ marginLeft: 20, width: 100, height: 40, backgroundColor: color3, justifyContent: 'center', alignItems: 'center', padding: 10, borderRadius: 5 }}><Text style={ [styles.textStyle], { color: 'white'} }>Refund</Text></View>
+    }else{
+      cik = <Text style={ [styles.textStyle], {marginLeft: 20} }></Text>
+    }
+
+    return cik;
+  }
+
+  renderDataItem(data){
+
+    //console.log(data);
+
+    let a = data.map(item=>{
+
+    return(
+    <View key={item.product_id} style={{ margin: 10, marginBottom: 20 }}>
+      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+        <Text style={ styles.textStyle }>{item.product_name}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
+          <Text style={ styles.textStyle }>{item.unit_price}</Text>
+          {this.renderRefund()}
+        </View>
+
+      </View>
+    </View>
+    )
+
+    });
+
+    return a;
+
+  }
+
+  onPressButton = () => {
+    this.setState({
+      refund: !this.state.refund
+    })
+  }
   render(){
       //console.log(this.props);
 
       const datareal = this.props.data;
+
+
+      console.log(datareal.items);
+
       return(
-        <View style={ styles.viewStyles }>
+        <ScrollView style={ styles.viewStyles }>
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 20, borderBottomWidth: 1}}>
-            <View style = {styles.buttonStyle}>
+            <TouchableOpacity style = {styles.buttonStyle} onPress={ this.onPressButton.bind()}>
               <Text style={[ styles.text, { color: 'white'}]}>Refund</Text>
-            </View>
+            </TouchableOpacity>
             <View style = {styles.buttonStyle}>
               <Text style={[ styles.text, { color: 'white'}]}>Kirim Invoice</Text>
             </View>
@@ -53,7 +124,15 @@ class DetailSales extends Component{
               <List icons="paper" judul="Customer" value={datareal.customer}/>
               <List icons="ios-add" judul="Grand Total" value={datareal.grand_total}/>
           </View>
-        </View>
+
+          <View style={{ borderTopWidth: 1, borderBottomWidth: 1, marginTop: 10, marginBottom: 10}}>
+            <Text style={ [styles.teks], {padding: 10} }>Product</Text>
+          </View>
+
+          <View>
+            {this.renderDataItem(datareal.items || [])}
+          </View>
+        </ScrollView>
       );
   }
 }

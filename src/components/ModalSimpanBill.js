@@ -11,7 +11,7 @@ class SimpleModal extends Component{
     super(props);
     this.state=({
       lebar: Dimensions.get('window').width - 500,
-      tinggi: Dimensions.get('window').height - 500,
+      tinggi: Dimensions.get('window').height - 400,
       selected: "key1",
       namaBill: '',
     })
@@ -86,7 +86,7 @@ class SimpleModal extends Component{
                   <Input onChangeText={(nama)=> { this.setState({namaBill: nama})}}/>
                 </Item>
 
-              <TouchableOpacity style={{ backgroundColor: color3, marginTop: 20, borderRadius: 5, padding: 10 }} onPress={this._storeData.bind(this)}>
+              <TouchableOpacity style={{ backgroundColor: color3, marginTop: 20, borderRadius: 5, padding: 10, width: '100%', marginTop: 40, justifyContent: 'center', alignItems: 'center'}} onPress={this._storeData.bind(this)}>
                 <Text style={styles.textStyle}>Simpan</Text>
               </TouchableOpacity>
 

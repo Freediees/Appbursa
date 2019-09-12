@@ -1,4 +1,4 @@
-import { TAMBAH_DATA, ADD_LIBRARY, TAMBAH_TOTAL, GET_DATA_SALES, RESET_DATA_TRANSAKSI, REMOVE_TRANSAKSI_BY_ID, GET_DATA_DETAIL } from './actionTypes';
+import { TAMBAH_DATA, ADD_LIBRARY, TAMBAH_TOTAL, GET_DATA_SALES, RESET_DATA_TRANSAKSI, REMOVE_TRANSAKSI_BY_ID, GET_DATA_DETAIL, PLUS_ONE, MINUS_ONE, ADD_SPG } from './actionTypes';
 
 export const tambahData = (data) => ({
   type: TAMBAH_DATA,
@@ -29,6 +29,16 @@ export const getDataSales = (data) => ({
   payload: data
 })
 
+export const plusOneA = (index) => ({
+  type: PLUS_ONE,
+  payload: index
+})
+
+export const minusOneA = (index) => ({
+  type: MINUS_ONE,
+  payload: index
+})
+
 export const testThunk = () => {
   return async dispatch => {
 
@@ -56,6 +66,61 @@ export const getDataDetail = (data) => ({
   payload: data
 })
 
+export const addSPGA = (data) => ({
+  type: ADD_SPG,
+  payload: data
+})
+
+
+export const plusOne = (index,data) => {
+  return async dispatch => {
+
+    try{
+
+      let a = data[index];
+
+      a.quantity = a.quantity + 1;
+      a.subtotal = a.quantity * a.unit_price;
+
+
+      data[index] = a;
+
+      dispatch(plusOneA(data));
+
+      //console.log(data);
+
+
+    }catch(error){
+      console.log(error);
+    }
+  }
+}
+
+export const minusOne = (index,data) => {
+  return async dispatch => {
+
+    try{
+
+      let a = data[index];
+
+      if(a.quantity > 1){
+        a.quantity = a.quantity - 1;
+        a.subtotal = a.quantity * a.unit_price;
+      }
+
+      data[index] = a;
+
+      dispatch(minusOneA(data));
+
+
+    }catch(error){
+
+    }
+  }
+}
+
+
+
 export const getDetails = (id) => {
   return async dispatch => {
     try{
@@ -68,6 +133,28 @@ export const getDetails = (id) => {
       console.log(json);
 
       dispatch(getDataDetail(json));
+
+    }catch(error){
+
+    }
+  }
+}
+
+export const addSPG = (person,index, data) => {
+  return async dispatch => {
+    try{
+
+
+      let c = data[index];
+
+      c.spg = person;
+
+      data[index] = c;
+
+
+      console.log(data);
+
+      dispatch(addSPGA(data));
 
     }catch(error){
 
@@ -95,4 +182,21 @@ export const removeDataTransaksi = (data) => {
 
     }
   }
+}
+
+export const setFromBill = (index, data) => {
+
+  return async dispatch => {
+    try{
+
+      //console.log(index);
+      //console.log(data);
+
+      dispatch(plusOneA(data.data));
+
+    }catch(error){
+
+    }
+  }
+
 }

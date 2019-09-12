@@ -5,7 +5,7 @@ const setDataTransaksi = (state=[], action) => {
   switch(action.type){
 
     case 'TAMBAH_DATA':
-      //console.log(state);
+      //console.log(action.data);
 
       count = count + 1;
 
@@ -13,7 +13,14 @@ const setDataTransaksi = (state=[], action) => {
         ...state, {
           id: action.data.id,
           name: action.data.name,
-          price: action.data.price,
+          option: 'a',
+          real_unit_price: action.data.price,
+          unit_price: action.data.unit_price,
+          quantity: 1,
+          serial: action.data.code,
+          discount: 0,
+          subtotal: action.data.price,
+          spg: 'spg 1',
           index: count,
         }
       ]
@@ -29,7 +36,28 @@ const setDataTransaksi = (state=[], action) => {
 
       return action.data;
 
+    case 'PLUS_ONE':
+
+      let a = action.payload;
+      return [...state = a];
+
+    case 'MINUS_ONE':
+
+      let b = action.payload;
+      return [...state = b];
+
+    case 'ADD_SPG':
+
+      console.log('masuk spg');
+
+      console.log(action.payload);
+
+      let c = action.payload;
+
+      return [...state = c ];
+
     default:
+
       return state;
   }
 }

@@ -3,6 +3,8 @@ import {View, Text, Modal, Dimensions, TouchableOpacity, ScrollView, FlatList, S
 import { Card, Left, Right, Body, CardItem, Form, Picker, Item, Label, Input } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 
+import axios from 'axios';
+
 import { color1, color2, color3, color4, color5 } from './Color';
 
 const data = [
@@ -20,8 +22,22 @@ class SimpleModal extends Component{
     this.state=({
       lebar: Dimensions.get('window').width - 180,
       tinggi: Dimensions.get('window').height - 180,
-      selected: "key1"
+      selected: "key1",
+      data: [],
     })
+  }
+
+  componentDidMount(){
+    axios.get("http://mpos.bursasajadah.com/api/v1/customers?api-key=kc0gcg8ks0kk0ogw4o0k8s88ockgkokgo8okwg8s")
+      .then(
+        (res)=>{
+          this.setState({ data: res.data.data })
+          console.log(res.data.data);
+        }
+      )
+      .catch((error) => {
+          console.log(error);
+      });
   }
 
   onValueChange(value: string) {
@@ -30,12 +46,31 @@ class SimpleModal extends Component{
     });
   }
 
+  searchFilterFunction = text => {
+
+    //console.log(this.state.data)
+
+    let a  = this.state.data;
+
+    const newData = a.filter(item => {
+
+      //console.log(item);
+      const itemData = `${item.person.toUpperCase()}`;
+
+       const textData = text.toUpperCase();
+
+       return itemData.indexOf(textData) > -1;
+    });
+
+    this.setState({ data: newData });
+  };
+
   renderItem(res){
-    console.log(res)
+    //console.log(res)
     return(
-      <Row style={{ margin: 3 }} key={res.item.id}>
+      <Row style={{ margin: 3 }} key={res.item.email}>
         <Col style={ styles.colStyle } onPress={this.props.changeModalVisibility}>
-          <Text style={ styles.textStyle }>{res.item.nama}</Text>
+          <Text style={ styles.textStyle }>{res.item.person}</Text>
         </Col>
       </Row>
     );
@@ -45,9 +80,9 @@ class SimpleModal extends Component{
 
     return(
       <View style={{ flex: 1, width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
-        <View style={{ width: this.state.lebar, height: this.state.tinggi, backgroundColor: 'white'}}>
+        <View style={{ width: this.state.lebar, height: this.state.tinggi, backgroundColor: 'white', borderRadius: 5}}>
           <Grid style={{ flex: 1}}>
-            <Row style={{ height: 100, backgroundColor: '#ffffff', padding: 20, justifyContent: 'space-between', borderColor: color1, borderBottomWidth: 1 }}>
+            <Row style={{ height: 100, backgroundColor: '#ffffff', padding: 20, justifyContent: 'space-between', borderColor: color1, borderBottomWidth: 1, borderRadius: 5 }}>
                 <TouchableOpacity
                   onPress={this.props.changeModalVisibility}
                   style={{ width: 100 , height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 5, backgroundColor:color1}}>
@@ -68,16 +103,16 @@ class SimpleModal extends Component{
                 <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }}>
                       <Item floatingLabel>
                         <Label>Nama Customer</Label>
-                        <Input />
+                        <Input onChangeText={text => this.searchFilterFunction(text)}/>
                       </Item>
                 </View>
 
-                <View style={{ backgroundColor: color3, height:40, margin: 20, justifyContent: 'center', alignItems: 'center', borderRadius: 5 }}>
+                <TouchableOpacity style={{ backgroundColor: color3, height:40, margin: 20, justifyContent: 'center', alignItems: 'center', borderRadius: 5 }} onPress={()=>{ this.props.navigation.navigate('AddCustomer')}}>
                   <Text style={{ color: 'white', fontSize: 15, fontFamily: 'Roboto' }}>Tambah Customer Baru</Text>
-                </View>
+                </TouchableOpacity>
 
                 <FlatList
-                  data={data}
+                  data={this.state.data}
                   renderItem={(item)=> this.renderItem(item)}
                 />
               </Col>

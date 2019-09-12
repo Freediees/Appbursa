@@ -5,14 +5,96 @@ import { Grid, Col, Row } from 'react-native-easy-grid';
 
 import { color1, color2, color3, color4, color5 } from './Color';
 
+import axios from 'axios';
+
 class AddCustomer extends Component {
 
+
+  constructor(props){
+    super(props);
+
+    this.state = ({
+      customer_group_id: 1,
+    	company: "Bursasajadah",
+    	person: "",
+    	email: "",
+    	phone: "",
+    	address: "",
+    	city: ""
+    })
+  }
   backToHome = () =>{
       this.props.navigation.navigate('Home');
   }
 
 
+  buttonSubmit = () => {
+    //console.log(this.state);
+
+    if( this.state.person == "" || this.state.email == "" || this.state.phone == "" || this.state.address == ""){
+
+      alert("Silahkan lengkapi data")
+
+    }else{
+
+      let data = {
+        customer_group_id: 1,
+      	company: 'Bursasajadah',
+      	person: this.state.person,
+      	email: this.state.email,
+      	phone: this.state.phone,
+      	address: this.state.address,
+      	city: 'Bandung'
+      }
+
+      const opt = {
+        headers: {'Content-Type': 'application/json', 'api-key':'kc0gcg8ks0kk0ogw4o0k8s88ockgkokgo8okwg8s'},
+        url: 'http://mpos.bursasajadah.com/api/v1/customers/',
+        data: data,
+        method: 'post'
+      }
+      axios(opt)
+      .then((res) =>
+        { console.log(res)}
+      ).catch((error) => {
+        console.log(error)
+      });
+
+
+    }
+
+
+  }
+
+  onChangeNama = text => {
+    this.setState({
+      person: text
+    })
+  }
+
+  onChangeEmail = text => {
+    this.setState({
+      email: text
+    })
+  }
+
+  onChangePhone = text => {
+    this.setState({
+      phone: text
+    })
+  }
+
+  onChangeAddress = text => {
+    this.setState({
+      address: text
+    })
+  }
+
+
   render(){
+
+    //console.log(this.state.person);
+
     return(
       <Container>
 
@@ -35,23 +117,23 @@ class AddCustomer extends Component {
               <Form>
                 <Item floatingLabel>
                   <Label>Name</Label>
-                  <Input />
+                  <Input onChangeText={ text => this.onChangeNama(text) }/>
                 </Item>
                 <Item floatingLabel last>
                   <Label>Email</Label>
-                  <Input />
+                  <Input onChangeText={ text => this.onChangeEmail(text) }/>
                 </Item>
                 <Item floatingLabel>
                   <Label>Phone</Label>
-                  <Input />
+                  <Input onChangeText = { text => this.onChangePhone(text) }/>
                 </Item>
                 <Item floatingLabel last>
                   <Label>Birth Date</Label>
-                  <Input />
+                  <Input onChangeText = { text => this.onChangeAddress(text) }/>
                 </Item>
               </Form>
 
-              <Button style={{ width: '100%', marginTop: 100, borderRadius: 50, backgroundColor: color1, alignItems:'center', justifyContent: 'center' }}>
+              <Button style={{ width: '100%', marginTop: 100, borderRadius: 50, backgroundColor: color1, alignItems:'center', justifyContent: 'center' }} onPress={ this.buttonSubmit.bind(this) }>
                 <Text style={{ color: 'white', fontFamily: 'Roboto', fontSize: 15 }}>Tambah</Text>
               </Button>
             </View>

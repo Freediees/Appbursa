@@ -4,7 +4,7 @@ import { Container, Header,Content, Footer, FooterTab, Button, Icon } from 'nati
 import { Row, Col, Grid} from 'react-native-easy-grid';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { tambahData, tambahLibrary, tambahTotal, resetData, removeTransaksiById, removeDataTransaksi } from '../actions';
+import { tambahData, tambahLibrary, tambahTotal, resetData, removeTransaksiById, removeDataTransaksi, plusOne, minusOne } from '../actions';
 import SimpleModal from './SimpleModal';
 import ModalSPG from './ModalSPG';
 import ModalSimpanBill from './ModalSimpanBill';
@@ -32,24 +32,21 @@ class Home extends Component{
       transaksi: [],
       isModalVisible: false,
       testModal: <View></View>,
-      tempBill: []
+      tempBill: [],
+      indexTemp: ''
     }
   }
 
   componentDidMount(){
 
     //console.log('sini');
+    this._getData();
 
     axios.get("http://mpos.bursasajadah.com/api/v1/products?api-key=kc0gcg8ks0kk0ogw4o0k8s88ockgkokgo8okwg8s")
       .then(
         (res)=>{
 
-          //console.log('hemeh');
-          //console.log(res.data.data);
-          //this.setState({ data: res.data.data });
-           //console.log(res);
-          this.props.dispatch(tambahLibrary(res));
-
+          this.props.tambahLibrary(res);
 
         }
       )
@@ -67,9 +64,12 @@ class Home extends Component{
 
   onTestClickItem(data){
 
-    this.props.dispatch(tambahData(data));
+
+    //console.log(data);
+
+    this.props.tambahData(data);
     let a = this.hitungTotal();
-    console.log(a);
+    //console.log(a);
   }
 
 
@@ -80,21 +80,23 @@ class Home extends Component{
     totalNilai = 0;
     let i = 0;
     for(i=0;i<a;i++){
-      totalNilai = totalNilai + parseInt(this.props.dataTransaksi[i].price, 10);
+      totalNilai = totalNilai + parseInt(this.props.dataTransaksi[i].subtotal, 10);
     }
 
     return totalNilai;
   }
 
-  cekButtonz(index){
-    //console.log(index);
+  plusButton = (index, data, b) => {
 
-    let a = { "hemeh1": this.props.dataTransaksi, "hemeh2": 0 }
-    this.props.dispatch(removeDataTransaksi(this.props.dataTransaksi ));
+    this.props.plusOne(index, data);
+  }
+
+  minusButton = (index, data, b) => {
+    this.props.minusOne(index,data);
   }
 
   clearAll = () => {
-    this.props.dispatch(resetData());
+    this.props.resetData();
   }
 
   cetakBill = () => {
@@ -113,35 +115,35 @@ class Home extends Component{
   }
 
   renderTransaksi(item){
-    //console.log(item);
+    console.log(item);
     return(
-      <Row onPress={ ()=> { this.cekButtonz(); }}>
+      <Row onPress={()=> this.changeModalVisibility(true, 5, item.index)}>
         <Col size={2} style={{ padding: 10, justifyContent: 'center' }}>
           <Text style={styles.text}>{item.item.name}</Text>
         </Col>
         <Col size={1} style={{ alignItems: 'center', justifyContent: 'center', paddingRight: 10 }}>
-          <Text style={styles.text}>Rp. {item.item.price}</Text>
+          <Text style={styles.text}>Rp. {item.item.unit_price}</Text>
         </Col>
         <Col size={1} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingRight: 10 }}>
-        <View style={{ height: 23, width: 23, backgroundColor: color1, justifyContent: 'center', alignItems: 'center', borderRadius: 5, margin: 5}}>
+        <TouchableOpacity style={{ height: 23, width: 23, backgroundColor: color1, justifyContent: 'center', alignItems: 'center', borderRadius: 5, margin: 5}} onPress={ this.minusButton.bind(this,item.index, this.props.dataTransaksi) }>
+          <Text>-</Text>
+        </TouchableOpacity>
+        <Text style={styles.text}>{item.item.quantity}</Text>
+        <TouchableOpacity style={{ height: 23, width: 23, backgroundColor: color1, justifyContent: 'center', alignItems: 'center', borderRadius: 5, margin: 5 }} onPress={ this.plusButton.bind(this,item.index, this.props.dataTransaksi) }>
           <Text>+</Text>
-        </View>
-        <Text style={styles.text}>1</Text>
-        <View style={{ height: 23, width: 23, backgroundColor: color1, justifyContent: 'center', alignItems: 'center', borderRadius: 5, margin: 5 }}>
-          <Text>+</Text>
-        </View>
+        </TouchableOpacity>
         </Col>
         <Col size={1} style={{ alignItems: 'center', justifyContent: 'center', paddingRight: 10 }}>
-          <Text style={styles.text}>Rp. {item.item.price}</Text>
+          <Text style={styles.text}>Rp. {item.item.subtotal}</Text>
         </Col>
         <Col size={1} style={{ justifyContent: 'center', alignItems: 'center', paddingRight: 2 }}>
-          <Text style={styles.text}>SPG 1</Text>
+          <Text style={styles.text}>{item.item.spg}</Text>
         </Col>
       </Row>
     );
   }
 
-  changeModalVisibility=(bool, data)=>{
+  changeModalVisibility=(bool, data, index)=>{
     //console.log('data adalah : ' + data)
 
     if(data == 1){
@@ -151,7 +153,9 @@ class Home extends Component{
     }else if(data == 3){
       this.setState({ testModal: <ModalSimpanBill changeModalVisibility={this.changeModalVisibility} tempBill={this.state.tempBill} />})
     }else if(data == 4){
-      this.setState({ testModal: <ModalCustomer changeModalVisibility={this.changeModalVisibility} />})
+      this.setState({ testModal: <ModalCustomer changeModalVisibility={this.changeModalVisibility} navigation={this.props.navigation} />})
+    }else if(data == 5){
+      this.setState({ testModal: <ModalSPG changeModalVisibility={this.changeModalVisibility} navigation={this.props.navigation} indexSPG={index}/>})
     }
 
     this.setState({ isModalVisible: bool });
@@ -161,7 +165,7 @@ class Home extends Component{
 
   cekButton(){
     let hitung = this.hitungTotal();
-    this.props.dispatch(tambahTotal(hitung));
+    this.props.tambahTotal(hitung);
   }
 
   updateData = () => {
@@ -204,7 +208,9 @@ class Home extends Component{
 
     this.cekButton();
 
-    this._getData();
+    //this._getData();
+
+    //console.log(this.props.dataTransaksi);
 
     const { col1, col2 } = styles;
     return(
@@ -316,7 +322,7 @@ class Home extends Component{
                   </TouchableOpacity>
                 </Col>
                 <Col style={{ backgroundColor: color2}}>
-                  <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} onPress={()=> { this.props.navigation.navigate('Manual')} }>
+                  <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} onPress={()=> { this.props.navigation.navigate('Inventory')} }>
                     <Icon type="Ionicons" name="md-calculator" style={{ color: 'white', fontSize: 40}}/>
                     <Text style={{ fontFamily: "Roboto", fontSize: 15, color: 'white'}}>Manual</Text>
                   </TouchableOpacity>
@@ -338,7 +344,7 @@ class Home extends Component{
   }
 }
 
-export default connect(mapStateToProps)(Home);
+export default connect(mapStateToProps, {tambahData, tambahLibrary, tambahTotal, resetData, removeTransaksiById, removeDataTransaksi, plusOne, minusOne})(Home);
 
 function mapStateToProps(state){
   return {
