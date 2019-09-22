@@ -1,11 +1,23 @@
-const setDataList = (state=[], action) => {
+const initialState = {
+  isFetching: true,
+  dataList: []
+}
+
+const setDataList = (state=initialState, action) => {
   switch(action.type){
     case "ADD_LIBRARY":
 
-      //console.log(action.data.data);
+      console.log(action);
       const data = action.data.data.data;
 
-      return[...state, data];
+      return{...state, isFetching: false, dataList: data};
+
+    case "UPDATE_LIBRARY":
+
+      console.log(action);
+      const data2 = action.data.data;
+
+      return{...state, isFetching: false, dataList: data2};
 
     default:
       return state;

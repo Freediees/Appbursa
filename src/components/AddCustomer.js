@@ -53,6 +53,9 @@ class AddCustomer extends Component {
         data: data,
         method: 'post'
       }
+
+
+      console.log(opt);
       axios(opt)
       .then((res) =>
         { console.log(res)}

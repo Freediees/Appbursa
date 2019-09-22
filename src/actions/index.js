@@ -1,7 +1,12 @@
-import { TAMBAH_DATA, ADD_LIBRARY, TAMBAH_TOTAL, GET_DATA_SALES, RESET_DATA_TRANSAKSI, REMOVE_TRANSAKSI_BY_ID, GET_DATA_DETAIL, PLUS_ONE, MINUS_ONE, ADD_SPG } from './actionTypes';
+import { SET_DATA_CUSTOMER, TAMBAH_DATA, ADD_LIBRARY, TAMBAH_TOTAL, GET_DATA_SALES, RESET_DATA_TRANSAKSI, REMOVE_TRANSAKSI_BY_ID, GET_DATA_DETAIL, PLUS_ONE, MINUS_ONE, ADD_SPG, UPDATE_LIBRARY} from './actionTypes';
 
 export const tambahData = (data) => ({
   type: TAMBAH_DATA,
+  data
+})
+
+export const updateLibrary = (data) => ({
+  type: UPDATE_LIBRARY,
   data
 })
 
@@ -39,6 +44,29 @@ export const minusOneA = (index) => ({
   payload: index
 })
 
+export const setDataCustomer = (data) => ({
+  type: SET_DATA_CUSTOMER,
+  payload: data
+})
+
+
+
+export const cariBarang = (text) => {
+  return async dispatch => {
+    try{
+      let response = await fetch(`http://mpos.bursasajadah.com/api/v1/products?query=${text}&api-key=kc0gcg8ks0kk0ogw4o0k8s88ockgkokgo8okwg8s`)
+      let json = await response.json();
+
+      console.log(json.data);
+
+      dispatch(updateLibrary(json));
+
+    }catch(error){
+      console.log(error);
+    }
+  }
+}
+
 export const testThunk = () => {
   return async dispatch => {
 
@@ -50,7 +78,7 @@ export const testThunk = () => {
       let json = await response.json();
 
 
-      //console.log(json);
+      console.log(json);
 
       dispatch(getDataSales(json));
 

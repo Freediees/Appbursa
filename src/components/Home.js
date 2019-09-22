@@ -1,15 +1,16 @@
 import React, { Component} from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, AsyncStorage } from 'react-native';
-import { Container, Header,Content, Footer, FooterTab, Button, Icon } from 'native-base';
+import { Container, Header,Content, Footer, FooterTab, Button, Icon, Input } from 'native-base';
 import { Row, Col, Grid} from 'react-native-easy-grid';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { tambahData, tambahLibrary, tambahTotal, resetData, removeTransaksiById, removeDataTransaksi, plusOne, minusOne } from '../actions';
+import { tambahData, tambahLibrary, tambahTotal, resetData, removeTransaksiById, removeDataTransaksi, plusOne, minusOne, cariBarang } from '../actions';
 import SimpleModal from './SimpleModal';
-import ModalSPG from './ModalSPG';
+import ModalSPG from './ModalSpgDiskon';
 import ModalSimpanBill from './ModalSimpanBill';
 import ModalListBill from './ModalListBill';
 import ModalCustomer from './ModalCustomer';
+import ModalDiskon from  './ModalDiskon';
 
 const data=[
   {key:"Jason1"},
@@ -33,7 +34,8 @@ class Home extends Component{
       isModalVisible: false,
       testModal: <View></View>,
       tempBill: [],
-      indexTemp: ''
+      indexTemp: '',
+      diskon: 0
     }
   }
 
@@ -53,6 +55,14 @@ class Home extends Component{
       .catch((error) => {
           console.log(error);
       });
+  }
+
+  onSetDiskon = (value) => {
+
+    //console.log('beres bos ' + value);
+    this.setState({
+      diskon: value
+    })
   }
 
   onClickItem(data){
@@ -83,7 +93,12 @@ class Home extends Component{
       totalNilai = totalNilai + parseInt(this.props.dataTransaksi[i].subtotal, 10);
     }
 
-    return totalNilai;
+    let persen = this.state.diskon;
+    let besardiskon = persen * totalNilai / 100;
+
+    totalAkhir = totalNilai - besardiskon
+
+    return totalAkhir;
   }
 
   plusButton = (index, data, b) => {
@@ -96,6 +111,7 @@ class Home extends Component{
   }
 
   clearAll = () => {
+    this.setState({ diskon : 0 })
     this.props.resetData();
   }
 
@@ -115,7 +131,7 @@ class Home extends Component{
   }
 
   renderTransaksi(item){
-    console.log(item);
+    //console.log(item);
     return(
       <Row onPress={()=> this.changeModalVisibility(true, 5, item.index)}>
         <Col size={2} style={{ padding: 10, justifyContent: 'center' }}>
@@ -143,11 +159,23 @@ class Home extends Component{
     );
   }
 
+  onCheckout = () => {
+    //console.log('oke bos');
+    let a = this.hitungTotal();
+
+    //console.log(a);
+
+    if(a <= 0){
+      alert("Keranjang kosong");
+    }else{
+      this.changeModalVisibility(true, 1);
+    }
+  }
   changeModalVisibility=(bool, data, index)=>{
     //console.log('data adalah : ' + data)
 
     if(data == 1){
-      this.setState({ testModal: <SimpleModal changeModalVisibility={this.changeModalVisibility} totalHarga={this.props.setTotal} />})
+      this.setState({ testModal: <SimpleModal changeModalVisibility={this.changeModalVisibility} totalHarga={this.props.setTotal} navigation={this.props.navigation}/>})
     }else if(data == 2){
       this.setState({ testModal: <ModalListBill changeModalVisibility={this.changeModalVisibility}  tempBill={this.state.tempBill} />})
     }else if(data == 3){
@@ -156,6 +184,8 @@ class Home extends Component{
       this.setState({ testModal: <ModalCustomer changeModalVisibility={this.changeModalVisibility} navigation={this.props.navigation} />})
     }else if(data == 5){
       this.setState({ testModal: <ModalSPG changeModalVisibility={this.changeModalVisibility} navigation={this.props.navigation} indexSPG={index}/>})
+    }else if(data == 6){
+      this.setState({ testModal: <ModalDiskon changeModalVisibility={this.changeModalVisibility} onButtonPress={ this.onSetDiskon }/>})
     }
 
     this.setState({ isModalVisible: bool });
@@ -172,7 +202,7 @@ class Home extends Component{
     let arr  = this.props.dataTransaksi;
 
     let dataFix = arr.map(el => {
-      console.log(el);
+      //console.log(el);
       el.id==='3'? {...el, name: 'hemeh'}: el
     })
 
@@ -181,7 +211,7 @@ class Home extends Component{
 
   simpanBill = () => {
 
-    console.log('simpanBill ok')
+    //console.log('simpanBill ok')
   }
 
   _getData = async () => {
@@ -204,13 +234,13 @@ class Home extends Component{
   }
 
 
+  onCariBarang = (text) => {
+    this.props.cariBarang(text);
+  }
+
   render(){
 
     this.cekButton();
-
-    //this._getData();
-
-    //console.log(this.props.dataTransaksi);
 
     const { col1, col2 } = styles;
     return(
@@ -219,8 +249,9 @@ class Home extends Component{
           <Col size={2} style={{margin: 10, paddingLeft: 10, paddingRight: 10}}>
             <Row style={{ height: 50, marginBottom: 8, backgroundColor: '#FFFFFF' }}>
               <View style={{ flex: 1 , justifyContent: "space-between", alignItems: 'center', flexDirection: 'row', paddingLeft: 16, paddingRight: 16}}>
-                <Text style={ styles.text }>Search</Text>
-                <Icon name="search" />
+                <Input placeholder="Cari Barang"
+                onChangeText={( text )=> this.onCariBarang(text) }
+                />
               </View>
             </Row>
 
@@ -230,7 +261,7 @@ class Home extends Component{
             <Row style={{ backgroundColor: '#ffffff'}}>
               <Grid style={{ padding: 10, margin: 0}}>
                 <FlatList
-                  data={this.props.dataLibrary[0]}
+                  data={this.props.dataLibrary.dataList}
                   renderItem={(item)=>this.renderItem(item)}
                 />
               </Grid>
@@ -273,7 +304,13 @@ class Home extends Component{
               />
             </Row>
 
-              <Row style={{ height: 60,}}>
+            <Row style={{ height: 40, borderTopWidth: 1}}>
+              <Col style={{ backgroundColor: 'white', margin: 1, height: 40, justifyContent: 'center', paddingLeft: 10 }}>
+                <Text style={[styles.text,{ fontSize: 20 }]}>Diskon : {this.state.diskon}%</Text>
+              </Col>
+            </Row>
+
+              <Row style={{ height: 40,}}>
                 <Col style={{ backgroundColor: color1, margin: 1 }}>
                   <TouchableOpacity style={{ flex: 1, justifyContent:'center', alignItems:'center'}} onPress={ ()=> this.changeModalVisibility(true, 3)}>
                     <Text style={[styles.text , {color: '#ffffff'}]}>Simpan Bill</Text>
@@ -284,6 +321,13 @@ class Home extends Component{
                   <Text style={[styles.text , {color: '#ffffff'}]}>Cetak Bill</Text>
                 </TouchableOpacity>
                 </Col>
+              </Row>
+              <Row style={{ height: 40,}}>
+                <Col style={{ backgroundColor: color1, margin: 1 }}>
+                  <TouchableOpacity style={{ flex: 1, justifyContent:'center', alignItems:'center'}} onPress={ ()=> this.changeModalVisibility(true, 6)}>
+                    <Text style={[styles.text , {color: '#ffffff'}]}>Set Diskon</Text>
+                  </TouchableOpacity>
+                </Col>
                 <Col style={{ backgroundColor: color1, margin: 1 }}>
                 <TouchableOpacity style={{ flex: 1, justifyContent:'center', alignItems:'center'}} onPress={this.clearAll.bind(this)}>
                   <Text style={[styles.text , {color: '#ffffff'}]}>Hapus Daftar</Text>
@@ -292,7 +336,7 @@ class Home extends Component{
               </Row>
               <Row style = {{ backgroundColor: color3, height: 60, borderBottomLeftRadius: 10, borderBottomRightRadius: 10}}>
                 <Col>
-                  <TouchableOpacity style={{ flex: 1, justifyContent:'center', alignItems:'center'}} onPress={()=> this.changeModalVisibility(true, 1)}>
+                  <TouchableOpacity style={{ flex: 1, justifyContent:'center', alignItems:'center'}} onPress={()=> {this.onCheckout()}}>
                     <Text style={{ fontSize: 30, color: '#ffffff' }}>Total Rp.{this.props.setTotal}</Text>
                   </TouchableOpacity>
                 </Col>
@@ -344,13 +388,14 @@ class Home extends Component{
   }
 }
 
-export default connect(mapStateToProps, {tambahData, tambahLibrary, tambahTotal, resetData, removeTransaksiById, removeDataTransaksi, plusOne, minusOne})(Home);
+export default connect(mapStateToProps, {cariBarang, tambahData, tambahLibrary, tambahTotal, resetData, removeTransaksiById, removeDataTransaksi, plusOne, minusOne})(Home);
 
 function mapStateToProps(state){
   return {
     dataTransaksi: state.setDataTransaksi,
     dataLibrary: state.setDataList,
     setTotal: state.setTotal,
+    dataCustomer: state.setDataCustomer,
   };
 }
 

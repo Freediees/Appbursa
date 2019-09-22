@@ -3,6 +3,9 @@ import {View, Text, Modal, Dimensions, TouchableOpacity, ScrollView, FlatList, S
 import { Card, Left, Right, Body, CardItem, Form, Picker, Item, Label, Input } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 
+import { connect } from 'react-redux';
+import { setDataCustomer } from '../actions';
+
 import axios from 'axios';
 
 import { color1, color2, color3, color4, color5 } from './Color';
@@ -32,7 +35,7 @@ class SimpleModal extends Component{
       .then(
         (res)=>{
           this.setState({ data: res.data.data })
-          console.log(res.data.data);
+          //console.log(res.data.data);
         }
       )
       .catch((error) => {
@@ -44,6 +47,12 @@ class SimpleModal extends Component{
     this.setState({
       selected: value
     });
+  }
+
+  onSelectData=(data,a)=>{
+    //console.log(data);
+    this.props.setDataCustomer(data.item);
+    this.props.changeModalVisibility(false, 7);
   }
 
   searchFilterFunction = text => {
@@ -69,7 +78,7 @@ class SimpleModal extends Component{
     //console.log(res)
     return(
       <Row style={{ margin: 3 }} key={res.item.email}>
-        <Col style={ styles.colStyle } onPress={this.props.changeModalVisibility}>
+        <Col style={ styles.colStyle } onPress={this.onSelectData.bind(this,res)}>
           <Text style={ styles.textStyle }>{res.item.person}</Text>
         </Col>
       </Row>
@@ -124,6 +133,15 @@ class SimpleModal extends Component{
   }
 }
 
+function mapStateToProps(state){
+  return {
+    dataTransaksi: state.setDataTransaksi,
+    dataLibrary: state.setDataList,
+    setTotal: state.setTotal,
+  };
+}
+
+
 const styles = StyleSheet.create({
   colStyle: {
     justifyContent: 'center',
@@ -142,4 +160,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default SimpleModal;
+export default connect(mapStateToProps, {setDataCustomer})(SimpleModal);

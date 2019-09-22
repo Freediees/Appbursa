@@ -5,6 +5,8 @@ import { Grid, Col, Row } from 'react-native-easy-grid';
 import { connect } from 'react-redux';
 import { color1, color2, color3, color4, color5 } from './Color';
 
+import { resetData } from '../actions';
+
 
 class SimpleModal extends Component{
   constructor(props){
@@ -56,6 +58,9 @@ class SimpleModal extends Component{
 
       await AsyncStorage.setItem('Data', JSON.stringify(datax));
       this.props.changeModalVisibility(false, 7);
+
+      this.props.resetData();
+
       alert('Data Berhasil Disimpan');
 
 
@@ -123,4 +128,4 @@ function mapStateToProps(state){
   };
 }
 
-export default connect(mapStateToProps)(SimpleModal);
+export default connect(mapStateToProps, {resetData})(SimpleModal);

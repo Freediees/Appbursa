@@ -1,25 +1,132 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, ImageBackground, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Item, Label, Input } from 'native-base';
 
 import { color1, color2, color3, color4 } from './Color';
 
+import axios from 'axios';
+
 export default class Login extends Component{
+
+
+  constructor(props){
+    super(props);
+    this.state = {
+      user:'',
+      pass: '',
+      isFetching: false,
+    }
+  }
+  onButtonSubmit = () => {
+    if( this.state.user == "" || this.state.pass == ""){
+
+      alert("Silahkan lengkapi data")
+
+    }else{
+
+
+      this.setState({
+        isFetching: true,
+      })
+
+      const user = this.state.user;
+      const pass = this.state.pass;
+
+      let data = {
+        identity: user,
+      	password: pass,
+      }
+
+      const opt = {
+        headers: {'Content-Type': 'application/json', 'api-key':'kc0gcg8ks0kk0ogw4o0k8s88ockgkokgo8okwg8s'},
+        url: 'http://mpos.bursasajadah.com/api/v1/auth/login',
+        data: data,
+        method: 'post'
+      }
+
+      console.log(opt);
+
+      axios(opt)
+      .then((res) =>
+        {
+          //console.log(res);
+          this.setState({
+            isFetching: false,
+          })
+          if(res.data.status ){
+            this.props.navigation.navigate("Home");
+          }else{
+            alert('Username atau Password salah');
+          }
+        }
+      ).catch((error) => {
+        console.log(error);
+
+        this.setState({
+          isFetching: false,
+        })
+
+        alert("Password atau Username salah");
+      });
+
+
+    }
+  }
+
+  onUsername(text){
+    this.setState({
+      user: text,
+    })
+  }
+
+  onPassword(text){
+    this.setState({
+      pass: text,
+    })
+  }
+
+
   render(){
+
+    let submit;
+
+    if(this.state.isFetching){
+      submit =
+      <TouchableOpacity style={[styles.formStyle, {justifyContent: 'center', alignItems: 'center', backgroundColor: color1, marginTop: 20 }]}>
+          <ActivityIndicator size="large" style={{ color: color2}}/>
+      </TouchableOpacity>
+    }else{
+      submit =
+      <TouchableOpacity style={[styles.formStyle, {justifyContent: 'center', alignItems: 'center', backgroundColor: color3, marginTop: 20 }]} onPress={ this.onButtonSubmit.bind(this) }>
+          <Text style={styles.textStyle}>Login</Text>
+      </TouchableOpacity>
+    }
+
+
+
     return(
         <ImageBackground resizeMode={'cover'} source={require('./img/background.jpg')} style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
           <View>
-            <Image source={require('./img/logo_bursa.png')} style={{ width: 250, height: 250 }} resizeMode={'contain'}/>
+            <Image source={require('./img/logo.png')} style={{ width: 250, height: 250 }} resizeMode={'contain'}/>
           </View>
           <View style={styles.formStyle}>
-            <Input placeholder="Username" />
+            <Input placeholder="Username"
+                value={this.state.user}
+                keyboard-type='email'
+                onChangeText={( text )=> this.onUsername(text) }
+            />
+
           </View>
           <View style={styles.formStyle}>
-            <Input placeholder="Password" />
+            <Input placeholder="Password"
+              value={this.state.pass}
+              secureTextEntry={true}
+              onChangeText={( text )=> this.onPassword(text) }
+            />
           </View>
-          <TouchableOpacity style={[styles.formStyle, {justifyContent: 'center', alignItems: 'center', backgroundColor: color3, marginTop: 20 }]} onPress={()=> {this.props.navigation.navigate('Home')}}>
-              <Text style={styles.textStyle}>Login</Text>
-          </TouchableOpacity>
+
+          {submit}
+
         </ImageBackground>
     );
   }

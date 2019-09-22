@@ -31,7 +31,7 @@ class Activity extends Component{
   }
 
   renderItem(res){
-    console.log(res)
+    //console.log(res)
     return(
       <Row style={{ height: 30, margin: 3 }} key={res.id}>
         <Col style={ styles.colStyle }>

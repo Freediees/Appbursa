@@ -6,6 +6,7 @@ import { createSwitchNavigator, createAppContainer, createDrawerNavigator } from
 
 
 import Home from "./Home";
+import Struk from "./Struk";
 import Login from './Login';
 import WelcomeScreen from './Welcome';
 import Activity from "./Activity";
@@ -34,9 +35,10 @@ const AppNavigator = createDrawerNavigator({
 });
 const AppSwitchNavigator = createSwitchNavigator({
   Home: {screen: AppNavigator},
+  Login: { screen: Login },
+  Struk: {screen: Struk},
   AddCustomer: {screen: AddCustomer},
   Activity: { screen: Activity },
-  Login: { screen: Login },
   Inventory: {screen: AppNavigator},
   Welcome: {screen: WelcomeScreen},
   Manual: { screen: Manual },
