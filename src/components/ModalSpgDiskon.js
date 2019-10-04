@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, Modal, Dimensions, TouchableOpacity, ScrollView, FlatList, StyleSheet } from 'react-native';
 import { Card, Left, Right, Body, CardItem, Form, Picker, Item, Label, Input } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
-import { addSPG } from '../actions';
+import { addSPG, addSPGA } from '../actions';
 import { connect } from 'react-redux';
 
 import axios from 'axios';
@@ -57,15 +57,17 @@ class ModalSPG extends Component{
       selectedDiskon: [1,0,0,0,0,0],
       kodeVoucher: '',
       textDiskon: '',
+      discRupiah: '',
+      discPersen: '',
     })
   }
 
   componentDidMount(){
-    axios.get("http://mpos.bursasajadah.com/api/v1/customers?api-key=kc0gcg8ks0kk0ogw4o0k8s88ockgkokgo8okwg8s")
+    axios.get("http://mpos.bursasajadah.com/api/v1/users?api-key=kc0gcg8ks0kk0ogw4o0k8s88ockgkokgo8okwg8s")
       .then(
         (res)=>{
           this.setState({ data: res.data.data })
-          //console.log(res.data.data);
+          console.log(res.data.data);
         }
       )
       .catch((error) => {
@@ -104,7 +106,7 @@ class ModalSPG extends Component{
     const newData = a.filter(item => {
 
       //console.log(item);
-      const itemData = `${item.person.toUpperCase()}`;
+      const itemData = `${item.first_name.toUpperCase()} ${item.last_name.toUpperCase()}`;
 
        const textData = text.toUpperCase();
 
@@ -126,15 +128,40 @@ class ModalSPG extends Component{
 
 
 
-    this.props.addSPG(person, this.props.indexSPG, data);
+    //this.props.addSPG(person, this.props.indexSPG, data);
+  }
+
+  onSelesai = () => {
+    this.props.addSPG(this.state.namaSpg, this.props.indexSPG, this.props.dataTransaksi);
+
+    //console.log(this.state.discRupiah);
+    //console.log(this.state.discPersen);
+
+    let a;
+    if(this.state.discRupiah == 0){
+      a = this.props.dataTransaksi[this.props.indexSPG];
+      a.discount = parseInt(parseInt(a.subtotal) * parseInt(this.state.discPersen) /100);
+    }else{
+      a = this.props.dataTransaksi[this.props.indexSPG];
+      a.discount = parseInt(this.state.discRupiah);
+    }
+
+    let b = this.props.dataTransaksi;
+    b[this.props.indexSPG] = a
+
+    this.props.addSPGA(b);
+
+    //console.log(a);
+
+    this.props.changeModalVisibility(false, 7);
   }
 
   renderItem(res){
     //console.log(res)
     return(
-      <Row style={{ margin: 3 }} key={res.item.email} onPress={ this.onSelectSPG.bind(this,res.item.person, res.index, this.props.dataTransaksi) }>
+      <Row style={{ margin: 3 }} key={res.item.email} onPress={ this.onSelectSPG.bind(this,res.item.first_name, res.index, this.props.dataTransaksi) }>
         <Col style={ styles.colStyle } >
-          <Text style={ styles.textStyle }>{res.item.person}</Text>
+          <Text style={ styles.textStyle }>{res.item.first_name} {res.item.last_name}</Text>
         </Col>
       </Row>
     );
@@ -152,6 +179,22 @@ class ModalSPG extends Component{
 
   }
 
+  onRupiahChange(text){
+    this.setState({
+      discRupiah: text,
+      discPersen: '0'
+    })
+
+    //console.log(text);
+  }
+
+  onPersenChange(text){
+    this.setState({
+      discRupiah: '0',
+      discPersen: text
+    })
+  }
+
   render(){
 
     //console.log(this.state.selectedDiskon);
@@ -167,10 +210,10 @@ class ModalSPG extends Component{
                   <Text style={{ fontSize: 15, fontFamily: 'Roboto', color: 'white', fontWeight: 'bold'}}>Batal</Text>
                 </TouchableOpacity>
 
-                <Text style={{ fontSize: 30, fontFamily:'Roboto' }}>SPG dan Diskon</Text>
+                <Text style={{ fontSize: 30, fontFamily:'Roboto' }}>SPG</Text>
 
                 <TouchableOpacity
-                  onPress={this.props.changeModalVisibility}
+                  onPress={this.onSelesai.bind(this)}
                   style={{ width: 100 , height: 50, justifyContent: 'center', alignItems: 'center', backgroundColor: color2, borderRadius: 5}}>
                   <Text style={{ fontSize: 15, fontFamily: 'Roboto', color: 'white', fontWeight: 'bold'}}>Selesai</Text>
                 </TouchableOpacity>
@@ -194,48 +237,41 @@ class ModalSPG extends Component{
                 />
               </Col>
               <Col>
-                <View style={{ flex: 1, margin: 10, padding: 10, borderLeftWidth: 1, borderColor: color3 }}>
-                  <Text style={styles.textStyle}>Diskon</Text>
-                  <Row style={{ height: 100}}>
-                    <Col>
-                      <ButtonDiskon diskon="0%" idx={0} selected={ this.state.selectedDiskon[0] } setDiskon={this.setDiskon}/>
-                    </Col>
-                    <Col>
-                      <ButtonDiskon diskon="10%" idx={1} selected={ this.state.selectedDiskon[1] } setDiskon={this.setDiskon}/>
-                    </Col>
-                  </Row>
-                  <Row style={{ height: 100}}>
-                    <Col>
-                      <ButtonDiskon diskon="20%" idx={2} selected={ this.state.selectedDiskon[2] } setDiskon={this.setDiskon}/>
-                    </Col>
-                    <Col>
-                      <ButtonDiskon diskon="30%" idx={3} selected={ this.state.selectedDiskon[3] } setDiskon={this.setDiskon}/>
-                    </Col>
-                  </Row>
-                  <Row style={{ height: 100}}>
-                    <Col>
-                      <ButtonDiskon diskon="40%" idx={4} selected={ this.state.selectedDiskon[4] } setDiskon={this.setDiskon}/>
-                    </Col>
-                    <Col>
-                      <ButtonDiskon diskon="50%" idx={5} selected={ this.state.selectedDiskon[5] } setDiskon={this.setDiskon}/>
-                    </Col>
-                  </Row>
-
-                  <Row>
-                    <Col style={{justifyContent: 'center', paddingLeft: 10, paddingBottom: 10 }} >
-                      <Text style={styles.textStyle}>Kode Voucher</Text>
+              <Row style={{ height: 150 }}>
+                <Card style={{ flex: 1}}>
+                  <CardItem header bordered>
+                    <Text style={styles.textStyle}>Diskon Rupiah</Text>
+                  </CardItem>
+                  <CardItem bordered>
+                    <Body>
                       <Item>
-                        <Input placeholder="Kode"
-                            onChangeText={( text )=> this.onVoucher(text) }
+                        <Input placeholder="Rp. 0"
+                        value={this.state.discRupiah}
+                        onChangeText={(text)=> this.onRupiahChange(text)}
                         />
                       </Item>
+                    </Body>
+                  </CardItem>
+                </Card>
+              </Row>
 
-                      <Text style={[styles.textStyle, {fontSize: 15, color: color3 }]}>{this.state.textDiskon}</Text>
-                    </Col>
-                  </Row>
-                </View>
-
-
+              <Row style={{ height: 150 }}>
+                <Card style={{ flex: 1}}>
+                  <CardItem header bordered>
+                    <Text style={styles.textStyle}>Diskon Persen</Text>
+                  </CardItem>
+                  <CardItem bordered>
+                    <Body>
+                      <Item>
+                        <Input placeholder="0%"
+                        value={this.state.discPersen}
+                        onChangeText={(text)=> this.onPersenChange(text)}
+                        />
+                      </Item>
+                    </Body>
+                  </CardItem>
+                </Card>
+              </Row>
               </Col>
             </Row>
           </Grid>
@@ -271,4 +307,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect(mapStateToProps, {addSPG})(ModalSPG);
+export default connect(mapStateToProps, {addSPG, addSPGA})(ModalSPG);

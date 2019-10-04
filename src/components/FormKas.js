@@ -3,96 +3,52 @@ import { View, Text, StyleSheet, ImageBackground, Image, TouchableOpacity, Activ
 import { Item, Label, Input } from 'native-base';
 import { connect } from 'react-redux';
 
-import { setDataUser } from '../actions';
+import { setKas } from '../actions';
 
 import { color1, color2, color3, color4 } from './Color';
 
 import axios from 'axios';
 
-class Login extends Component{
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function removeCommas(x){
+    return x.toString().replace(",","");
+}
+
+
+class FormKas extends Component{
 
 
   constructor(props){
     super(props);
     this.state = {
-      user:'',
-      pass: '',
+      uang: 0,
+      textUang: 0,
       isFetching: false,
     }
   }
   onButtonSubmit = () => {
-    if( this.state.user == "" || this.state.pass == ""){
 
-      alert("Silahkan lengkapi data")
+    this.props.setKas(this.state.uang);
 
-    }else{
-
-
-      this.setState({
-        isFetching: true,
-      })
-
-      const user = this.state.user;
-      const pass = this.state.pass;
-
-      //const user = 'owner';
-      //const pass = 'Sp4tnick';
-
-      let data = {
-        identity: user,
-      	password: pass,
-      }
-
-      const opt = {
-        headers: {'Content-Type': 'application/json', 'api-key':'kc0gcg8ks0kk0ogw4o0k8s88ockgkokgo8okwg8s'},
-        url: 'http://mpos.bursasajadah.com/api/v1/auth/login',
-        data: data,
-        method: 'post'
-      }
-
-      console.log(opt);
-
-      axios(opt)
-      .then((res) =>
-        {
-          //console.log(res);
-          this.setState({
-            isFetching: false,
-          })
-          if(res.data.status){
-            //console.log(res.data.data);
-
-            this.props.setDataUser(res.data.data);
-            this.props.navigation.navigate("FormKas");
-          }else{
-            alert('Username atau Password salah');
-          }
-        }
-      ).catch((error) => {
-        console.log(error);
-
-        this.setState({
-          isFetching: false,
-        })
-
-        alert("Password atau Username salah");
-      });
-
-
-    }
+    this.props.navigation.navigate('Home');
   }
 
   onUsername(text){
+
+    let b = removeCommas(text);
+    let a = numberWithCommas(b);
+
+
+
     this.setState({
-      user: text,
+      uang: b,
+      textUang: a,
     })
   }
 
-  onPassword(text){
-    this.setState({
-      pass: text,
-    })
-  }
 
 
   render(){
@@ -107,7 +63,7 @@ class Login extends Component{
     }else{
       submit =
       <TouchableOpacity style={[styles.formStyle, {justifyContent: 'center', alignItems: 'center', backgroundColor: color3, marginTop: 20 }]} onPress={ this.onButtonSubmit.bind(this) }>
-          <Text style={styles.textStyle}>Login</Text>
+          <Text style={styles.textStyle}>Lanjutkan</Text>
       </TouchableOpacity>
     }
 
@@ -118,20 +74,17 @@ class Login extends Component{
           <View>
             <Image source={require('./img/logo.png')} style={{ width: 250, height: 250 }} resizeMode={'contain'}/>
           </View>
+
+          <Text style={[styles.textStyle, {color: color3}]}>Saldo Awal</Text>
           <View style={styles.formStyle}>
-            <Input placeholder="Username"
-                value={this.state.user}
-                keyboard-type='email'
-                onChangeText={( text )=> this.onUsername(text) }
+            <Input placeholder='Rp.0'
+                value={this.state.textUang}
+                keyboard-type='number'
+                textStyle={{align: 'center'}}
+                clearTextOnFocus={true}
+                onChangeText={( text )=> this.onUsername(text)}
             />
 
-          </View>
-          <View style={styles.formStyle}>
-            <Input placeholder="Password"
-              value={this.state.pass}
-              secureTextEntry={true}
-              onChangeText={( text )=> this.onPassword(text) }
-            />
           </View>
 
           {submit}
@@ -150,6 +103,8 @@ function mapStateToProps(state){
     dataGeneral: state.setGeneral,
   };
 }
+
+
 
 const styles = StyleSheet.create({
   viewStyle: {
@@ -174,4 +129,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect(mapStateToProps, {setDataUser})(Login);
+export default connect(mapStateToProps, {setKas})(FormKas);

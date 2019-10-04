@@ -1,4 +1,4 @@
-import { SET_DATA_CUSTOMER, TAMBAH_DATA, ADD_LIBRARY, TAMBAH_TOTAL, GET_DATA_SALES, RESET_DATA_TRANSAKSI, REMOVE_TRANSAKSI_BY_ID, GET_DATA_DETAIL, PLUS_ONE, MINUS_ONE, ADD_SPG, UPDATE_LIBRARY} from './actionTypes';
+import {SET_DATA_USER, SET_TOTAL_DISKON, DELETE_PAYMENT, SET_KAS, SET_GENERAL, UPDATE_PAYMENT, SET_PAYMENT, SET_DATA_CUSTOMER, TAMBAH_DATA, ADD_LIBRARY, TAMBAH_TOTAL, GET_DATA_SALES, RESET_DATA_TRANSAKSI, REMOVE_TRANSAKSI_BY_ID, GET_DATA_DETAIL, PLUS_ONE, MINUS_ONE, ADD_SPG, UPDATE_LIBRARY} from './actionTypes';
 
 export const tambahData = (data) => ({
   type: TAMBAH_DATA,
@@ -49,6 +49,41 @@ export const setDataCustomer = (data) => ({
   payload: data
 })
 
+export const setPayment = (data) => ({
+  type: SET_PAYMENT,
+  payload: data
+})
+
+export const updatePayment = (data) => ({
+  type: UPDATE_PAYMENT,
+  payload: data
+})
+
+export const setGeneral = (data) => ({
+ type: SET_GENERAL,
+ payload: data
+})
+
+export const setKas = (data) => ({
+  type: SET_KAS,
+  payload: data
+})
+
+export const deletePayment = (data) => ({
+  type: DELETE_PAYMENT,
+  payload: data
+})
+
+export const setTotalDiskon = (data) => ({
+  type: SET_TOTAL_DISKON,
+  payload: data
+})
+
+export const setDataUser = (data) => ({
+  type: SET_DATA_USER,
+  payload: data
+})
+
 
 
 export const cariBarang = (text) => {
@@ -57,7 +92,7 @@ export const cariBarang = (text) => {
       let response = await fetch(`http://mpos.bursasajadah.com/api/v1/products?query=${text}&api-key=kc0gcg8ks0kk0ogw4o0k8s88ockgkokgo8okwg8s`)
       let json = await response.json();
 
-      console.log(json.data);
+      //console.log(json.data);
 
       dispatch(updateLibrary(json));
 
@@ -78,7 +113,7 @@ export const testThunk = () => {
       let json = await response.json();
 
 
-      console.log(json);
+      //console.log(json);
 
       dispatch(getDataSales(json));
 
@@ -105,15 +140,44 @@ export const plusOne = (index,data) => {
 
     try{
 
+
       let a = data[index];
+      //console.log(a);
 
       a.quantity = a.quantity + 1;
       a.subtotal = a.quantity * a.unit_price;
+      a.discount = 0;
 
 
       data[index] = a;
 
       dispatch(plusOneA(data));
+
+      //console.log(data);
+
+
+    }catch(error){
+      console.log(error);
+    }
+  }
+}
+
+export const plusAmount = (index,data,amount) => {
+  return async dispatch => {
+
+    try{
+
+      //console.log(to)
+      var a = data[index];
+      a.quantity = parseInt(amount);
+      a.subtotal = a.quantity * a.unit_price;
+      a.discount = 0;
+
+      var b = data;
+      b[index] = a;
+
+
+      dispatch(plusOneA(b));
 
       //console.log(data);
 
@@ -158,7 +222,7 @@ export const getDetails = (id) => {
       let response = await fetch(`http://mpos.bursasajadah.com/api/v1/sales?reference=${id}&api-key=kc0gcg8ks0kk0ogw4o0k8s88ockgkokgo8okwg8s&include=items`);
       let json = await response.json();
 
-      console.log(json);
+      //console.log(json);
 
       dispatch(getDataDetail(json));
 

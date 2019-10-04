@@ -1,9 +1,10 @@
 // Green bursa
-export const color1 = "#77c9d4";
-export const color2 = "#57bc90";
-export const color3 = "#015249";
-export const color4 = "#a5a5af";
-export const color5 = "#ededed";
+// export const color1 = "#77c9d4";
+// export const color2 = "#57bc90";
+// export const color3 = "#015249";
+// export const color4 = "#a5a5af";
+// export const color5 = "#ededed";
+// export const red = '#f55347';
 
 // Baby color
 // export const color1 = "#F78888";
@@ -26,3 +27,11 @@ export const color5 = "#ededed";
 // export const color3 = "#303C6C";
 // export const color4 = "#F4976C";
 // export const color5 = "#ededed";
+
+//Theme bursa
+export const color1 = "#EEB211";
+export const color2 = "#009925";
+export const color3 = "#00661a";
+export const color4 = "#a5a5af";
+export const color5 = "#ededed";
+export const red = '#f55347';

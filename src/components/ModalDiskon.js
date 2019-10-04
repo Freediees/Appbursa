@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, Modal, Dimensions, TouchableOpacity, ScrollView, FlatList, StyleSheet } from 'react-native';
 import { Card, Left, Right, Body, CardItem, Form, Picker, Item, Label, Input } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
-import { addSPG } from '../actions';
+import { addSPG, setGeneral } from '../actions';
 import { connect } from 'react-redux';
 
 import axios from 'axios';
@@ -22,9 +22,13 @@ const data = [
 class ButtonDiskon extends Component{
   render(){
     return(
-      <View style={{ Height: 200, padding: 10, margin: 10, borderRadius: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: color3, color: 'white', fontSize: 20, fontFamily: 'Roboto' }}>
-        <Text style={{ fontSize: 20, fontFamily: 'Roboto', color: 'white'}}>{this.props.diskon}</Text>
-      </View>
+      <Card>
+        <CardItem>
+          <Body style={{ alignItems: 'center'}}>
+              <Text>{this.props.diskon}</Text>
+          </Body>
+        </CardItem>
+      </Card>
     );
   }
 }
@@ -33,10 +37,12 @@ class ModalDiskon extends Component{
   constructor(props){
     super(props);
     this.state=({
-      lebar: Dimensions.get('window').width - 100,
-      tinggi: Dimensions.get('window').height - 100,
+      lebar: Dimensions.get('window').width - 350,
+      tinggi: Dimensions.get('window').height - 200,
       selected: "key1",
       data: [],
+      discRupiah: '',
+      discPersen: '',
     })
   }
 
@@ -105,33 +111,70 @@ class ModalDiskon extends Component{
     }
 
   }
-  
 
-  renderItem(res){
-    //console.log(res)
-    return(
-      <Row style={{ margin: 3 }} key={res.item.email} onPress={ this.onSelectSPG.bind(this,res.item.person, res.index, this.props.dataTransaksi) }>
-        <Col style={ styles.colStyle } >
-          <Text style={ styles.textStyle }>{res.item.person}</Text>
-        </Col>
-      </Row>
-    );
+
+  onRupiahChange(text){
+    this.setState({
+      discRupiah: text,
+      discPersen: '0'
+    })
+
+    //console.log(text);
   }
+
+  onPersenChange(text){
+    this.setState({
+      discRupiah: '0',
+      discPersen: text
+    })
+  }
+
 
 
   onPilihDiskon = (value, a) => {
     //console.log(value);
-
-    this.props.onButtonPress(value);
+    this.props.setGeneral(value);
+    //this.props.onButtonPress(value);
     this.props.changeModalVisibility(false, 7);
   }
 
+  onSelesai=()=>{
+
+    let total = this.props.setTotal;
+
+    let pjgDiskon = this.props.dataTransaksi.length;
+    //console.log(a);
+
+    let diskon = 0;
+    let i = 0;
+    for(i=0;i<pjgDiskon;i++){
+      diskon = diskon + parseInt(this.props.dataTransaksi[i].discount, 10);
+    }
+
+    let final1 = total - diskon;
+
+    let final = 0;
+
+    if(this.state.discRupiah == '0'){
+      final = final1 * parseInt(this.state.discPersen) / 100;
+    }else if(this.state.discPersen == '0'){
+      final = parseInt(this.state.discRupiah);
+    }else{
+      final = 0;
+    }
+
+    //console.log(final);
+
+    this.props.setGeneral(final);
+
+    this.props.changeModalVisibility(false, 7);
+  }
   render(){
 
     return(
       <View style={{ flex: 1, width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
         <View style={{ width: this.state.lebar, height: this.state.tinggi, backgroundColor: 'white', borderRadius: 5}}>
-          <Grid style={{ flex: 1}}>
+          <Grid style={{ flex: 1, padding: 10 }}>
             <Row style={{ height: 100, backgroundColor: '#ffffff', padding: 20, justifyContent: 'space-between', borderColor: color1, borderBottomWidth: 1, borderRadius: 5 }}>
                 <TouchableOpacity
                   onPress={this.props.changeModalVisibility}
@@ -142,108 +185,107 @@ class ModalDiskon extends Component{
                 <Text style={{ fontSize: 30, fontFamily:'Roboto' }}>Diskon</Text>
 
                 <TouchableOpacity
-                  onPress={this.props.changeModalVisibility}
+                  onPress={this.onSelesai.bind()}
                   style={{ width: 100 , height: 50, justifyContent: 'center', alignItems: 'center', backgroundColor: color2, borderRadius: 5}}>
                   <Text style={{ fontSize: 15, fontFamily: 'Roboto', color: 'white', fontWeight: 'bold'}}>Selesai</Text>
                 </TouchableOpacity>
             </Row>
 
             <Row>
-              <Col>
-                <View style={{ flex: 1, margin: 10, padding: 10 }}>
-                  <Row style={{height: 70}}>
-                    <Col onPress={ this.onPilihDiskon.bind(this,100) }>
-                      <ButtonDiskon diskon="100%"/>
-                    </Col>
-                    <Col onPress={ this.onPilihDiskon.bind(this,80) }>
-                      <ButtonDiskon diskon="80%"/>
-                    </Col>
-                  </Row>
-                  <Row style={{height: 70}}>
-                    <Col onPress={ this.onPilihDiskon.bind(this,60) }>
-                      <ButtonDiskon diskon="60%"/>
-                    </Col>
-                    <Col onPress={ this.onPilihDiskon.bind(this,50) }>
-                      <ButtonDiskon diskon="50%"/>
-                    </Col>
-                  </Row>
-                  <Row style={{ height: 70}}>
-                    <Col onPress={ this.onPilihDiskon.bind(this,20) }>
-                      <ButtonDiskon diskon="20%"/>
-                    </Col>
-                    <Col onPress={ this.onPilihDiskon.bind(this,10) }>
-                      <ButtonDiskon diskon="10%"/>
-                    </Col>
-                  </Row>
-                </View>
-              </Col>
+              <Card style={{ flex: 1}}>
+                <CardItem header bordered>
+                  <Text style={styles.textStyle}>Diskon Rupiah</Text>
+                </CardItem>
+                <CardItem bordered>
+                  <Body>
+                    <Item>
+                      <Input placeholder="Rp. 0"
+                          value= {this.state.discRupiah}
+                          onChangeText={( text )=> this.onRupiahChange(text) }
+                      />
+                    </Item>
+                  </Body>
+                </CardItem>
+              </Card>
             </Row>
 
             <Row>
-              <Col style={{ padding: 10 }}>
-                <Card>
-                  <CardItem>
-                    <Body style={{ alignItems: 'center'}}>
-                      <Text>100%</Text>
-                    </Body>
-                  </CardItem>
-                </Card>
-              </Col>
-
-              <Col style={{ padding: 10 }}>
-                <Card>
-                  <CardItem>
-                    <Body>
-                      <Text>90%</Text>
-                    </Body>
-                  </CardItem>
-                </Card>
-              </Col>
-
-              <Col style={{ padding: 10 }}>
-                <Card>
-                  <CardItem>
-                    <Body>
-                      <Text>80%</Text>
-                    </Body>
-                  </CardItem>
-                </Card>
-              </Col>
-
-              <Col style={{ padding: 10 }}>
-                <Card>
-                  <CardItem>
-                    <Body>
-                      <Text>70%</Text>
-                    </Body>
-                  </CardItem>
-                </Card>
-              </Col>
-
-              <Col style={{ padding: 10 }}>
-                <Card>
-                  <CardItem>
-                    <Body>
-                      <Text>60%</Text>
-                    </Body>
-                  </CardItem>
-                </Card>
-              </Col>
+              <Card style={{ flex: 1}}>
+                <CardItem header bordered>
+                  <Text style={styles.textStyle}>Diskon Persen</Text>
+                </CardItem>
+                <CardItem bordered>
+                  <Body>
+                    <Item>
+                      <Input placeholder="0%"
+                          value= {this.state.discPersen}
+                          onChangeText={( text )=> this.onPersenChange(text) }
+                      />
+                    </Item>
+                  </Body>
+                </CardItem>
+              </Card>
             </Row>
-
 
             <Row>
-              <Col style={{justifyContent: 'center', paddingLeft: 10, paddingBottom: 10 }} >
-                <Text style={styles.textStyle}>Kode Voucher</Text>
-                <Item>
-                  <Input placeholder="Kode"
-                      onChangeText={( text )=> this.onVoucher(text) }
-                  />
-                </Item>
-
-                <Text style={[styles.textStyle, {fontSize: 15, color: color3 }]}>{this.state.textDiskon}</Text>
-              </Col>
+              <Card style={{ flex: 1}}>
+                <CardItem header bordered>
+                  <Text style={styles.textStyle}>Kode Voucher</Text>
+                </CardItem>
+                <CardItem bordered>
+                  <Body>
+                    <Item>
+                      <Input placeholder="Kode"
+                          onChangeText={( text )=> this.onVoucher(text) }
+                      />
+                    </Item>
+                  </Body>
+                </CardItem>
+              </Card>
             </Row>
+
+
+              {
+
+
+              // <Col>
+              //   <View style={{ flex: 1, margin: 10, padding: 10 }}>
+              //     <Row>
+              //       <Col onPress={ this.onPilihDiskon.bind(this,100) }>
+              //         <ButtonDiskon diskon="100%"/>
+              //       </Col>
+              //       <Col onPress={ this.onPilihDiskon.bind(this,90) }>
+              //         <ButtonDiskon diskon="90%"/>
+              //       </Col>
+              //       <Col onPress={ this.onPilihDiskon.bind(this,80) }>
+              //         <ButtonDiskon diskon="80%"/>
+              //       </Col>
+              //       <Col onPress={ this.onPilihDiskon.bind(this,70) }>
+              //         <ButtonDiskon diskon="70%"/>
+              //       </Col>
+              //       <Col onPress={ this.onPilihDiskon.bind(this,60) }>
+              //         <ButtonDiskon diskon="60%"/>
+              //       </Col>
+              //     </Row>
+              //   </View>
+              // </Col>
+
+              // <Row>
+              //   <Col style={{justifyContent: 'center', paddingLeft: 10, paddingBottom: 10 }} >
+              //     <Text style={styles.textStyle}>Kode Voucher</Text>
+              //     <Item>
+              //       <Input placeholder="Kode"
+              //           onChangeText={( text )=> this.onVoucher(text) }
+              //       />
+              //     </Item>
+              //
+              //     <Text style={[styles.textStyle, {fontSize: 15, color: color3 }]}>{this.state.textDiskon}</Text>
+              //   </Col>
+              // </Row>
+
+              }
+
+
 
           </Grid>
         </View>
@@ -257,6 +299,7 @@ function mapStateToProps(state){
     dataTransaksi: state.setDataTransaksi,
     dataLibrary: state.setDataList,
     setTotal: state.setTotal,
+    dataGeneral: state.setGeneral,
   };
 }
 
@@ -288,4 +331,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect(mapStateToProps, {addSPG})(ModalDiskon);
+export default connect(mapStateToProps, {addSPG, setGeneral })(ModalDiskon);

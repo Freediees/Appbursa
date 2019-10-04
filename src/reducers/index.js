@@ -6,6 +6,8 @@ import setTotal from './setTotal';
 import setGetDataSales from './setGetDataSales';
 import setDataDetail from './setDataDetail';
 import setDataCustomer from  './setDataCustomer';
+import setPayment from './setPayment';
+import setGeneral from './setGeneral';
 
 export default combineReducers({
   setDataTransaksi,
@@ -13,5 +15,7 @@ export default combineReducers({
   setTotal,
   setGetDataSales,
   setDataDetail,
-  setDataCustomer
+  setDataCustomer,
+  setPayment,
+  setGeneral
 })

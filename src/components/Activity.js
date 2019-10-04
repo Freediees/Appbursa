@@ -116,7 +116,7 @@ class Activity extends Component{
               <Col style={{ backgroundColor: color3}}>
                 <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
                   <Icon type="Ionicons" name="md-star" style={{ color: 'white', fontSize: 40}} />
-                  <Text style={{ fontFamily: "Roboto", fontSize: 15, color: 'white'}}>Transaction</Text>
+                  <Text style={{ fontFamily: "Roboto", fontSize: 15, color: 'white'}}>Transaksi</Text>
                 </TouchableOpacity>
               </Col>
               <Col style={{ backgroundColor: color2}}>
@@ -128,7 +128,7 @@ class Activity extends Component{
               <Col style={{ backgroundColor: color2}}>
                 <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} onPress={()=> { this.props.navigation.navigate('Inventory')} }>
                   <Icon type="Ionicons" name="md-calculator" style={{ color: 'white', fontSize: 40}}/>
-                  <Text style={{ fontFamily: "Roboto", fontSize: 15, color: 'white'}}>Manual</Text>
+                  <Text style={{ fontFamily: "Roboto", fontSize: 15, color: 'white'}}>Inventory</Text>
                 </TouchableOpacity>
               </Col>
             </Row>

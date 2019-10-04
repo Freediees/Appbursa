@@ -20,7 +20,7 @@ const setDataTransaksi = (state=[], action) => {
           serial: action.data.code,
           discount: 0,
           subtotal: action.data.price,
-          spg: 'spg 1',
+          spg: 'SPG',
           index: count,
         }
       ]
@@ -39,6 +39,9 @@ const setDataTransaksi = (state=[], action) => {
     case 'PLUS_ONE':
 
       let a = action.payload;
+
+      console.log(a);
+
       return [...state = a];
 
     case 'MINUS_ONE':

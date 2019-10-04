@@ -1,10 +1,46 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, FlatList } from 'react-native';
-import { Container, Header,Content, Footer, FooterTab, Button, Icon, Input } from 'native-base';
+import { Container, Header,Content, Footer, FooterTab, Button, Icon, Input, Toast } from 'native-base';
 import { Row, Col, Grid} from 'react-native-easy-grid';
 import { connect } from 'react-redux';
 
 import { color1, color2, color3, color4, color5 } from './Color';
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+
+var date = new Date().getDate(); //Current Date
+var month = new Date().getMonth() + 1; //Current Month
+var year = new Date().getFullYear(); //Current Year
+var hours = new Date().getHours(); //Current Hours
+var min = new Date().getMinutes(); //Current Minutes
+var sec = new Date().getSeconds(); //Current Seconds
+var day = new Date().getDay(); //Current Seconds
+
+var hari = '';
+
+console.log(day);
+
+if(day == 1){
+  hari = "Senin";
+}else if(day == 2){
+  hari = "Selasa";
+}else if(day == 3){
+  hari = "Rabu";
+}else if(day == 4){
+  hari = "Kamis";
+}else if(day == 5){
+  hari = "Jumat";
+}else if(day == 6){
+  hari = "Sabtu";
+}else if(day == 7){
+  hari = "Minggu";
+}
+
+var tanggal = hari + ' ' + date + '/' + month + '/' + year + ' ' + hours + ':' + min + ':' + sec;
+
 
 class Struk extends Component{
 
@@ -15,25 +51,47 @@ class Struk extends Component{
         <Col>
           <Row>
             <Col>
-              <Text style={ [styles.textStyle, {color: color3, marginBottom: 5 }]}>#{item.index}: {item.item.name}</Text>
+              <Text style={ [styles.textStyle, {color: 'black', marginBottom: 5 }]}>#{item.index}: {item.item.name}</Text>
             </Col>
           </Row>
           <Row>
             <Col style={{ alignItems: 'flex-start'}}>
-              <Text Text style={ [styles.textStyle, {color: color3, marginBottom: 5 }]}>{item.item.quantity} x Rp. {item.item.unit_price}</Text>
+              <Text Text style={ [styles.textStyle, {color: 'black', marginBottom: 5 }]}>{item.item.quantity} x Rp. {item.item.unit_price}</Text>
             </Col>
             <Col style={{ alignItems: 'flex-end'}}>
-              <Text Text style={ [styles.textStyle, {color: color3, marginBottom: 5 }]}>Rp. {item.item.subtotal}</Text>
-            </Col>
-          </Row>
-          <Row>
-            <Col style={{ alignItems: 'flex-start'}}>
-              <Text Text style={ [styles.textStyle, {color: color3, marginBottom: 5, fontWeight: 'bold' }]}>Total</Text>
+              <Text Text style={ [styles.textStyle, {color: 'black', marginBottom: 5 }]}>Diskon Rp. {numberWithCommas(item.item.discount)}</Text>
             </Col>
             <Col style={{ alignItems: 'flex-end'}}>
-              <Text Text style={ [styles.textStyle, {color: color3, marginBottom: 5, fontWeight: 'bold' }]}>Rp. {item.item.subtotal}</Text>
+              <Text Text style={ [styles.textStyle, {color: 'black', marginBottom: 5 }]}>Rp. {numberWithCommas(item.item.subtotal - item.item.discount)}</Text>
             </Col>
           </Row>
+
+          {
+            // <Row>
+            //   <Col style={{ alignItems: 'flex-start'}}>
+            //     <Text Text style={ [styles.textStyle, {color: 'black', marginBottom: 5, fontWeight: 'bold' }]}>Total</Text>
+            //   </Col>
+            //   <Col style={{ alignItems: 'flex-end'}}>
+            //     <Text Text style={ [styles.textStyle, {color: 'black', marginBottom: 5, fontWeight: 'bold' }]}>Rp. {numberWithCommas(item.item.subtotal)}</Text>
+            //   </Col>
+            // </Row>
+          }
+
+        </Col>
+      </Row>
+    );
+  }
+
+  renderPayment(item){
+
+    console.log(item);
+    return(
+      <Row style={{ marginTop: 5, marginBottom: 5, borderBottomWidth: 1 }}>
+        <Col style={{ alignItems: 'flex-start'}}>
+          <Text Text style={ [styles.textStyle, {color: 'black', marginTop: 5 }]}>{item.item.paying_by}</Text>
+        </Col>
+        <Col style={{ alignItems: 'flex-end'}}>
+          <Text Text style={ [styles.textStyle, {color: 'black', marginTop: 5 }]}>Jumlah : Rp. {numberWithCommas(item.item.amount)}</Text>
         </Col>
       </Row>
     );
@@ -46,13 +104,18 @@ class Struk extends Component{
       <ScrollView>
         <View style={ [styles.viewStyle, {paddingBottom: 100}] }>
           <View>
-            <Image source={require('./img/logo.png')} style={{ width: 250, height: 250 }} resizeMode={'contain'}/>
+            <Image source={require('./img/logo.png')} style={{ width: 250, height: 110 }} resizeMode={'contain'}/>
+          </View>
+          <View style={ [styles.viewStyle, { marginBottom: 50 }] }>
+            <Text style={[styles.textStyle, {fontSize: 25}]}>INHOFTANK</Text>
+            <Text style={[styles.textStyle, {fontSize: 15}]}>Jl. Inhoftank, Bandung, Jawa Barat, Indonesia, 40143</Text>
+            <Text style={[styles.textStyle, {fontSize: 15}]}>Telp: 123456789</Text>
           </View>
 
           <View style={{ width: 500, justifyContent: 'flex-start' }}>
-            <Text style={styles.textStyle}>Tanggal: </Text>
-            <Text style={styles.textStyle}>Penjualan No : </Text>
-            <Text style={styles.textStyle}>Penjualan Terkait : </Text>
+            <Text style={styles.textStyle}>Tanggal: {tanggal}</Text>
+            <Text style={styles.textStyle}>Penjualan No : - </Text>
+            <Text style={styles.textStyle}>Penjualan Terkait : {this.props.dataGeneral.dataUser.first_name} {this.props.dataGeneral.dataUser.last_name}</Text>
             <Text style={styles.textStyle}>Konsumen : {this.props.dataCustomer.person}</Text>
           </View>
 
@@ -63,17 +126,50 @@ class Struk extends Component{
             renderItem={(item)=>this.renderTransaksi(item)}
           />
 
-          <Row style={{ marginTop: 20}}>
+          <Row style={{ marginTop: 0}}>
             <Col style={{ alignItems: 'flex-start'}}>
-              <Text Text style={ [styles.textStyle, {color: color3, marginBottom: 5, fontWeight: 'bold' }]}>Grand Total</Text>
+              <Text Text style={ [styles.textStyle, {color: 'black', marginBottom: 5, fontWeight: 'bold' }]}>Subtotal</Text>
             </Col>
             <Col style={{ alignItems: 'flex-end'}}>
-              <Text Text style={ [styles.textStyle, {color: color3, marginBottom: 5, fontWeight: 'bold' }]}>Rp. 200000 </Text>
+              <Text Text style={ [styles.textStyle, {color: 'black', marginBottom: 5, fontWeight: 'bold' }]}>Rp. {numberWithCommas(this.props.dataGeneral.totalDiskon + this.props.dataGeneral.diskon)} </Text>
             </Col>
           </Row>
+          <Row style={{ marginTop: 10, borderBottomWidth: 1 }}>
+            <Col style={{ alignItems: 'flex-start'}}>
+              <Text Text style={ [styles.textStyle, {color: 'black', marginBottom: 5, fontWeight: 'bold' }]}>Diskon : </Text>
+            </Col>
+            <Col style={{ alignItems: 'flex-end'}}>
+              <Text Text style={ [styles.textStyle, {color: 'black', marginBottom: 5, fontWeight: 'bold' }]}>Rp. {numberWithCommas(this.props.dataGeneral.diskon)} </Text>
+            </Col>
+          </Row>
+          <Row style={{ marginTop: 10}}>
+            <Col style={{ alignItems: 'flex-start'}}>
+              <Text Text style={ [styles.textStyle, {color: 'black', marginBottom: 5, fontWeight: 'bold' }]}>Grand Total</Text>
+            </Col>
+            <Col style={{ alignItems: 'flex-end'}}>
+              <Text Text style={ [styles.textStyle, {color: 'black', marginBottom: 5, fontWeight: 'bold' }]}>Rp. {numberWithCommas(this.props.dataGeneral.totalDiskon)} </Text>
+            </Col>
+          </Row>
+
+
+          <Text style={ styles.textStyle }>Dibayar dengan : </Text>
+          <FlatList
+            data={this.props.payment}
+            renderItem={(item)=>this.renderPayment(item)}
+          />
+
+          <Row style={{ marginTop: 10}}>
+            <Col style={{ alignItems: 'flex-start'}}>
+              <Text Text style={ [styles.textStyle, {color: 'black', marginBottom: 5, fontWeight: 'bold' }]}>Sisa</Text>
+            </Col>
+            <Col style={{ alignItems: 'flex-end'}}>
+              <Text Text style={ [styles.textStyle, {color: 'black', marginBottom: 5, fontWeight: 'bold' }]}>Rp. 0 </Text>
+            </Col>
+          </Row>
+
           </Grid>
 
-          <Text style={[styles.textStyle, {marginTop: 40}]}>Thank you for shopping with us, please come again</Text>
+          <Text style={[styles.textStyle, {marginTop: 40}]}>Terima kasih telah berbelanja dengan kami</Text>
 
           <TouchableOpacity style={[styles.viewStyle, {backgroundColor: color1, borderRadius: 5, height: 50, width: 300, marginTop: 50 }]}
             onPress={()=> alert('Koneksikan Printer')}
@@ -97,8 +193,9 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   textStyle: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Roboto',
+    color: 'black',
   }
 })
 function mapStateToProps(state){
@@ -107,6 +204,8 @@ function mapStateToProps(state){
     dataLibrary: state.setDataList,
     setTotal: state.setTotal,
     dataCustomer: state.setDataCustomer,
+    payment: state.setPayment,
+    dataGeneral: state.setGeneral,
   };
 }
 

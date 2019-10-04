@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
-import { Container, Form, Item, Label, Input, Button, Icon } from 'native-base';
+import { View, Text, ScrollView } from 'react-native';
+import { Container, Form, Item, Label, Input, Button, Icon, DatePicker } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 
 import { color1, color2, color3, color4, color5 } from './Color';
@@ -20,7 +20,8 @@ class AddCustomer extends Component {
     	email: "",
     	phone: "",
     	address: "",
-    	city: ""
+    	city: "",
+      birth: "",
     })
   }
   backToHome = () =>{
@@ -29,7 +30,7 @@ class AddCustomer extends Component {
 
 
   buttonSubmit = () => {
-    //console.log(this.state);
+    console.log(this.state);
 
     if( this.state.person == "" || this.state.email == "" || this.state.phone == "" || this.state.address == ""){
 
@@ -58,7 +59,7 @@ class AddCustomer extends Component {
       console.log(opt);
       axios(opt)
       .then((res) =>
-        { console.log(res)}
+        { alert('Berhasil Menambahkan'); this.props.navigation.navigate('Home')}
       ).catch((error) => {
         console.log(error)
       });
@@ -87,7 +88,19 @@ class AddCustomer extends Component {
     })
   }
 
-  onChangeAddress = text => {
+  onChangeKota = text => {
+    this.setState({
+      city: text
+    })
+  }
+
+  onChangeAddress(text){
+    var date = new Date().getDate(); //Current Date
+    var month = new Date().getMonth() + 1; //Current Month
+    var year = new Date().getFullYear(); //Current Year
+    var tanggal = date + '/' + month + '/' + year;
+    console.log(tanggal);
+
     this.setState({
       address: text
     })
@@ -100,7 +113,7 @@ class AddCustomer extends Component {
 
     return(
       <Container>
-
+        <ScrollView>
         <Grid style={{ padding: 0, margin: 0}}>
           <Row style={{ height: 20}}>
             <Col style={{ width: 50, backgroundColor: color3, height: 70, justifyContent: 'center', alignItems: 'center' }} onPress={ this.backToHome }>
@@ -116,10 +129,10 @@ class AddCustomer extends Component {
           </Row>
 
           <Row>
-            <View style={{flex: 1, padding: 150 }}>
+            <View style={{flex: 1, padding: 150, paddingTop: 100 }}>
               <Form>
                 <Item floatingLabel>
-                  <Label>Name</Label>
+                  <Label>Nama</Label>
                   <Input onChangeText={ text => this.onChangeNama(text) }/>
                 </Item>
                 <Item floatingLabel last>
@@ -127,13 +140,41 @@ class AddCustomer extends Component {
                   <Input onChangeText={ text => this.onChangeEmail(text) }/>
                 </Item>
                 <Item floatingLabel>
-                  <Label>Phone</Label>
-                  <Input onChangeText = { text => this.onChangePhone(text) }/>
+                  <Label>Telepon</Label>
+                  <Input
+                    keyboardType="numeric"
+                    onChangeText = { text => this.onChangePhone(text) }
+                  />
                 </Item>
                 <Item floatingLabel last>
-                  <Label>Birth Date</Label>
-                  <Input onChangeText = { text => this.onChangeAddress(text) }/>
+                  <Label>Kota</Label>
+                  <Input onChangeText={ text => this.onChangeKota(text) }/>
                 </Item>
+                <Item floatingLabel>
+                  <Label>Alamat</Label>
+                  <Input
+                    onChangeText = { text => this.onChangeAddress(text) }
+                  />
+                </Item>
+                {
+                  <View
+                  style={{ padding: 0, marginTop: 30,marginLeft: 5, borderBottomWidth: 0.5 }}>
+                    <DatePicker
+                    defaultDate={new Date(2018, 4, 4)}
+                    locale={"en"}
+                    timeZoneOffsetInMinutes={undefined}
+                    modalTransparent={false}
+                    animationType={"fade"}
+                    androidMode={"default"}
+                    placeHolderText="Tanggal Lahir"
+                    textStyle={{ fontFamily: "Roboto" }}
+                    placeHolderTextStyle={{ fontFamily: "Roboto" }}
+                    //onDateChange={this.onChangeAddress}
+                    disabled={false}
+                    />
+                  </View>
+                }
+
               </Form>
 
               <Button style={{ width: '100%', marginTop: 100, borderRadius: 50, backgroundColor: color1, alignItems:'center', justifyContent: 'center' }} onPress={ this.buttonSubmit.bind(this) }>
@@ -142,7 +183,7 @@ class AddCustomer extends Component {
             </View>
           </Row>
         </Grid>
-
+        </ScrollView>
 
       </Container>
     );

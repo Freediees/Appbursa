@@ -1,5 +1,6 @@
 import React, { Component } from'react';
 import { View, Text } from 'react-native';
+import { Root } from 'native-base';
 import store from "../store";
 import { Provider } from 'react-redux';
 import { createSwitchNavigator, createAppContainer, createDrawerNavigator } from 'react-navigation';
@@ -14,19 +15,22 @@ import Manual from "./Manual";
 import Inventory from "./Inventory";
 import Favorites from "./Favorites";
 import AddCustomer from "./AddCustomer";
+import FormKas from "./FormKas";
 
 export default class App extends Component {
   render(){
     return(
       <Provider store={store}>
-        <AppContainer />
+        <Root>
+          <AppContainer />
+        </Root>
       </Provider>
     );
   }
 }
 
 const AppNavigator = createDrawerNavigator({
-  Home: {screen: Home},
+  Library: {screen: Home},
   Favorites: {screen: Activity},
   Activity: {screen: Activity},
   Setting: {screen: WelcomeScreen},
@@ -36,8 +40,9 @@ const AppNavigator = createDrawerNavigator({
 const AppSwitchNavigator = createSwitchNavigator({
   Home: {screen: AppNavigator},
   Login: { screen: Login },
-  Struk: {screen: Struk},
   AddCustomer: {screen: AddCustomer},
+  FormKas: {screen: FormKas},
+  Struk: {screen: Struk},
   Activity: { screen: Activity },
   Inventory: {screen: AppNavigator},
   Welcome: {screen: WelcomeScreen},

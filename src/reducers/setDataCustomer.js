@@ -16,7 +16,7 @@ const initialState = {
   email: "",
   gst_no: "",
   payment_term: "0",
-  person: "",
+  person: "Walk In Customer",
   phone: "",
   postal_code: "",
   price_group_id: "1",
